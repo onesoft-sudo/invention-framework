@@ -53,66 +53,66 @@ class PowerParser
         /**
          * If, elseif, else and endif statements.
          */
-        $regex = ":if\((.*)\)";
+        $regex = ":if\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('if (%s) {'));
         }
 
-        $regex = ":elseif\((.*)\)";
+        $regex = ":elseif\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
-            $output = $this->replaceFromPregArray($output, $matches, $this->php("}\nelseif (%s) {"));
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("} elseif (%s) {"));
         }
 
-        $regex = ":else";
+        $regex = ":else:";
         if (preg_match_all("/$regex/", $output, $matches)) {
-            $output = preg_replace("/$regex/", $this->php("}\nelse {"), $output);
+            $output = preg_replace("/$regex/", $this->php("} else {"), $output);
         }
 
-        $output = $this->endblock($output, ':endif');
+        $output = $this->endblock($output, ':endif:');
 
         /**
          * foreach and endforeach statements.
          * This must be parsed before for loop parsing.
          */
-        $regex = ":foreach\((.*)\)";
+        $regex = ":foreach\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('foreach (%s) {'));
         }
 
-        $output = $this->endblock($output, ':endforeach');
+        $output = $this->endblock($output, ':endforeach:');
 
         /**
          * for and endfor statements.
          */
-        $regex = ":for\((.*)\)";
+        $regex = ":for\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('for (%s) {'));
         }
 
-        $output = $this->endblock($output, ':endfor');
+        $output = $this->endblock($output, ':endfor:');
 
         /**
          * php and endphp statements.
          */
-        $output = preg_replace('/:php/', "<?php\n", $output);
-        $output = preg_replace('/:endphp/', "\n?>", $output);
+        $output = preg_replace('/:php:/', "<?php\n", $output);
+        $output = preg_replace('/:endphp:/', "\n?>", $output);
 
         /**
          * while and endwhile statements.
          */
-        $regex = ":while\((.*)\)";
+        $regex = ":while\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('while (%s) {'));
         }
 
-        $output = $this->endblock($output, ':endwhile');
+        $output = $this->endblock($output, ':endwhile:');
 
         /**
          * dowhile and enddowhile statements.
          */
-        $output = preg_replace('/:dowhile/', $this->php("do {\n"), $output);
+        $output = preg_replace('/:dowhile:/', $this->php("do {\n"), $output);
 
-        $regex = ":enddowhile\((.*)\)";
+        $regex = ":enddowhile\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php("}\nwhile (%s);"));
         }
@@ -121,25 +121,25 @@ class PowerParser
          * title statement.
          */
 
-        $regex = ":title\((.*)\)";
+        $regex = ":title\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
-            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$title = %s;"));
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$_title = %s;"));
         }
 
         /**
          * section and endsection statements.
          */
-        $regex = ":section\((.*)\)";
+        $regex = ":section\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('$_names[] = %s; $_names_modified[] = %s; ob_start();'));
         }
 
-        $output = preg_replace('/:endsection/', $this->php('$_sections[array_shift($_names_modified)] = ob_get_clean();'), $output);
+        $output = preg_replace('/:endsection:/', $this->php('$_sections[array_shift($_names_modified)] = ob_get_clean();'), $output);
 
         /**
          * yield statement.
          */
-        $regex = ":yield\((.*)\)";
+        $regex = ":yield\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('echo $_sections[%s] ?? "";'));
         }
@@ -147,7 +147,7 @@ class PowerParser
         /**
          * extends statement.
          */
-        $regex = ":extends\((.*)\)";
+        $regex = ":extends\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('$_layout = %s;'));
         }
@@ -155,7 +155,7 @@ class PowerParser
         /**
          * args statement.
          */
-        $regex = ":args\(([0-9]+)\)";
+        $regex = ":args\(([0-9]+)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('echo $_component_args[%s] ?? "";'));
         }
@@ -163,38 +163,36 @@ class PowerParser
         /**
          * :csrf statement.
          */
-        $output = preg_replace('/:csrf/', $this->php('echo \OSN\Framework\View\Component::init("csrf");'), $output);
+        $output = preg_replace('/:csrf:/', $this->php('echo \OSN\Framework\View\Component::init("csrf");'), $output);
 
         /**
          * method statement.
          */
-        $regex = ":method\((.+)\)";
+        $regex = ":method\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             $output = $this->replaceFromPregArray($output, $matches, $this->php('echo \OSN\Framework\View\Component::init("custom-httpmethod", %s);'));
         }
 
         /**
+         * while and endwhile statements.
+         */
+        $regex = ":error\((.*?)\):";
+        if (preg_match_all("/$regex/", $output, $matches)) {
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$_error_field = %s;\n if (error_first(\$_error_field)) { \$_error_current = error_first(\$_error_field); "));
+        }
+
+        $output = preg_replace("/:enderror:/", $this->php("unset(\$_error_field);\nunset(\$_error_current); \n}\n"), $output);
+
+        /**
          * component statement.
          */
-        $regex = ":component\([^\r\n].*[^\r\n]\)";
+        $regex = ":component\([^\r\n].*?[^\r\n]\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
             foreach ($matches[0] as $match) {
-                $m = preg_replace('/:component\(|\)/', '', $match);
+                $m = preg_replace('/:component\(|\):/', '', $match);
                 $output = str_replace($match, $this->php('echo \OSN\Framework\View\Component::init('.$m.');'), $output);
             }
         }
-
-        /**
-         * function and endfunction statements.
-         */
-        $regex = ":function:(.*)\((.*)\)";
-        if (preg_match_all("/$regex/", $output, $matches)) {
-            foreach ($matches[0] as $k => $match) {
-                $output = str_replace($match, $this->php("function " . ($matches[1][$k] ?? '') . "(" . ($matches[2][$k] ?? '') . ") {"), $output);
-            }
-        }
-
-        $output = $this->endblock($output, ':endfunction');
 
         return $output;
     }
@@ -203,12 +201,13 @@ class PowerParser
     {
         $replacements = $this->replacements();
         $output = $code;
+        $output = $this->replaceDirectivesWithPHPCode($output);
 
         foreach ($replacements as $str => $replacement) {
             $output = preg_replace("/$str/", $replacement, $output);
         }
 
-        return $this->replaceDirectivesWithPHPCode($output);
+        return $output;
     }
 
     public function compile(): array

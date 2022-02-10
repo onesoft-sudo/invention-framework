@@ -49,7 +49,7 @@ class Layout
             $file = ($power)()['file'];
         }
 
-        $title = $this->title;
+        $_title = $this->title;
 
         $_names = $this->_names;
         $_sections = $this->_sections;

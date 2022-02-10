@@ -6,12 +6,13 @@ namespace OSN\Framework\ORM\Relationships;
 
 use OSN\Framework\Core\Model;
 use OSN\Framework\Database\Query;
+use OSN\Framework\ORM\ManyToManyTrait;
 
-class HasOneThrough extends HasOne
+class HasManyThrough extends HasMany
 {
     protected Model $bridge;
 
-    public function __construct(Model $baseModel /* mechanic */, Model $relationalModel /* owner */, Model $bridge, bool $initParent = true)
+    public function __construct(Model $baseModel /* project */, Model $relationalModel /* deployments */, Model $bridge, bool $initParent = true)
     {
         $this->bridge = $bridge;
         parent::__construct($baseModel, $relationalModel, $initParent);
@@ -20,17 +21,18 @@ class HasOneThrough extends HasOne
     protected function makeQuery()
     {
         $subQuery = new Query();
-        $data = $subQuery
+
+        $query = $subQuery
             ->select($this->bridge->table, [$this->bridge->primaryColumn])
             ->where($this->bridge->table . '.' . $this->tableToForeignColumn($this->baseModel->table), $this->baseModel->get($this->baseModel->primaryColumn));
 
-        $data2 = $data->get();
+        $data = $query->get();
 
-        if ($data2->count() < 1) {
-            return $data;
+        if ($data->count() < 1) {
+            return $query;
         }
 
-        $bridge_id = $data2[0][$this->bridge->primaryColumn];
+        $bridge_id = $data[0][$this->bridge->primaryColumn];
 
         return $this->query
             ->select($this->relationalModel->table)

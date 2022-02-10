@@ -45,7 +45,7 @@ class Session
 
     public function get($key)
     {
-        return $_SESSION[$key] ?? false;
+        return $_SESSION[$key] ?? null;
     }
 
     public function set($key, $value)
@@ -55,7 +55,7 @@ class Session
 
     public function unset($key)
     {
-        $_SESSION[$key] = '';
+        $_SESSION[$key] = null;
         unset($_SESSION[$key]);
     }
 
@@ -64,20 +64,21 @@ class Session
         return isset($_SESSION[$key]);
     }
 
-    public function getFlash()
+    public function getFlash($key = null)
     {
-        $msg = $this->get("flash_message");
+        $key = $key ?? "flash_message";
+        $msg = $this->get($key);
 
-        if ($msg === false)
-            return false;
+        if ($msg === null)
+            return null;
 
-        $this->unset("flash_message");
+        $this->unset($key);
         return $msg;
     }
 
-    public function setFlash(string $string)
+    public function setFlash(string $key, $value)
     {
-        $this->set("flash_message", $string);
+        $this->set($key, $value);
     }
 
     public function destroy()

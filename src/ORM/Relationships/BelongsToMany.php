@@ -4,12 +4,17 @@
 namespace OSN\Framework\ORM\Relationships;
 
 
+use OSN\Framework\Core\Collection;
 use OSN\Framework\Core\Model;
 use OSN\Framework\Database\Query;
 use OSN\Framework\ORM\DualRelationship;
+use OSN\Framework\ORM\ManyToManyTrait;
+use OSN\Framework\ORM\Pivot;
 
 class BelongsToMany extends DualRelationship
 {
+    use ManyToManyTrait;
+
     protected string $helper_table;
 
     /**

@@ -34,6 +34,7 @@ abstract class Model implements JsonSerializable
     protected array $guarded = [];
 
     public ?string $table = null;
+    public self $pivot;
     public string $primaryColumn = 'id';
     public Table $_table;
     protected Database $db;
@@ -58,6 +59,11 @@ abstract class Model implements JsonSerializable
     protected function db(): Database
     {
         return $this->db;
+    }
+
+    public function pivot()
+    {
+        return $this->pivot;
     }
 
     public function get($key = true)
@@ -131,10 +137,9 @@ abstract class Model implements JsonSerializable
 
     /**
      * @param $primaryValue
-     * @return Model|Collection
-     * @throws \OSN\Framework\Exceptions\CollectionException
+     * @return self|null
      */
-    public static function find($primaryValue)
+    public static function find($primaryValue): ?self
     {
         $model = new static();
 

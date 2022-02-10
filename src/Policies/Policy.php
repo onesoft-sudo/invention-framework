@@ -1,10 +1,10 @@
 <?php
 
 
-namespace OSN\Framework;
+namespace OSN\Framework\Policies;
 
 
-class Policies
+class Policy
 {
 
 }

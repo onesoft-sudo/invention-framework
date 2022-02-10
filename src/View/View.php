@@ -15,7 +15,7 @@ class View
     protected array $data;
     protected PowerParser $parser;
     protected string $file;
-    protected $title = '';
+    protected string $title = '';
 
     /**
      * View constructor.
@@ -70,20 +70,17 @@ class View
         }
 
         if (preg_match('/\.power\.php/', basename($this->file))) {
-            $isPower = true;
             $file = ($this->parser)()['file'];
         }
-        else
+        else {
             $file = $this->file;
+        }
 
         ob_start();
         include $file;
         $out = ob_get_clean();
 
-        //if (isset($isPower))
-         //   unlink($file);
-
-        $this->title = $title ?? '';
+        $this->title = $_title ?? '';
 
         return $out;
     }

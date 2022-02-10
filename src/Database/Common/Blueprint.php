@@ -5,6 +5,7 @@ namespace OSN\Framework\Database\Common;
 
 
 use OSN\Framework\Console\App;
+use OSN\Framework\Core\Model;
 use OSN\Framework\Database\MySQL\Column as MySQLColumn;
 use OSN\Framework\Database\SQLite\Column as SQLiteColumn;
 
@@ -15,7 +16,7 @@ abstract class Blueprint
     protected string $sqlEnd = '';
 
     /**
-     * @var array<SQLiteColumn, MySQLColumn>
+     * @var SQLiteColumn[]|MySQLColumn[]
      */
     protected array $columns = [];
 
@@ -100,6 +101,23 @@ abstract class Blueprint
     public function int(string $column, int $length = 0): Column
     {
         return $this->add($this->renderType("INTEGER", $length), $column);
+    }
+
+    public function foreignIdsFor(array $models, string $postfix = '_id')
+    {
+        foreach ($models as $k => $model) {
+            /**
+             * @var Model $m
+             */
+            $m = new $model();
+            $models[$k] = $m;
+            $col = preg_replace('/s$/', '', $m->table) . $postfix;
+            $this->int($col)->notNull();
+        }
+
+        foreach ($models as $model) {
+            $this->foreignKey(preg_replace('/s$/', '', $model->table) . $postfix, $model->table, $model->primaryColumn);
+        }
     }
 
     public function string(string $column, int $length = 0): Column

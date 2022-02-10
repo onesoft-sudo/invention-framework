@@ -1,9 +1,11 @@
 <?php
 
 
-namespace OSN\Framework\Core;
+namespace OSN\Framework\Routing;
 
 use App\Http\Config;
+use OSN\Framework\Core\App;
+use OSN\Framework\Core\Controller;
 use OSN\Framework\Exceptions\FileNotFoundException;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Facades\FunctionUtils;
@@ -12,7 +14,6 @@ use OSN\Framework\Http\HTTPMethodRouterHelper;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
 use OSN\Framework\Facades\Response as ResponseFacade;
-use OSN\Framework\Routing\Route;
 use OSN\Framework\View\View;
 use stdClass;
 
@@ -60,7 +61,6 @@ class Router
             throw new HTTPException(405);
         }
 
-
         if ($method === 'HEAD' && $anyRoute != false) {
             return '';
         }
@@ -91,9 +91,9 @@ class Router
 
             $userMiddlewareMethods = $callback[0]->getMiddlewareMethods();
 
-            foreach ($middleware as $middleware) {
-                if ((!in_array($middleware, $globals) && ((!empty($userMiddlewareMethods) && in_array($callback[1], $userMiddlewareMethods)) || empty($userMiddlewareMethods))) || in_array($middleware, $globals)) {
-                    $middlewareResponse = $middleware->execute(App::$app->request);
+            foreach ($middleware as $m) {
+                if ((!in_array($m, $globals) && ((!empty($userMiddlewareMethods) && in_array($callback[1], $userMiddlewareMethods)) || empty($userMiddlewareMethods))) || in_array($m, $globals)) {
+                    $middlewareResponse = $m->execute(App::$app->request);
 
                     if($middlewareResponse === true || $middlewareResponse === null){
                         continue;
@@ -105,8 +105,9 @@ class Router
                 }
             }
 
-            $params = FunctionUtils::getParameterTypes(...$callback);
+            $params = app()->prepareFunctionCallParams(...$callback);
 
+            /*
             if (isset($params[0])) {
                 $request = new $params[0]();
 
@@ -131,10 +132,13 @@ class Router
                         }
                     }
                 }
-            }
+            }*/
+
+            $params = array_merge($params, $route->params());
         }
 
-        $output = call_user_func_array($callback, [$request ?? App::request()]);
+        //$output = call_user_func_array($callback, [$request ?? App::request()]);
+        $output = call_user_func_array($callback, $params ?? ([$request ?? App::request()]));
 
         if (is_jsonable($output) && !($output instanceof Response || $output instanceof View)) {
             $this->response->header("Content-Type", "application/json");

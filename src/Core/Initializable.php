@@ -18,6 +18,11 @@ trait Initializable
     public function preinit()
     {
         foreach ($this->initializers as $initializer) {
+            if (isCLI() && $initializer->cgi === true)
+                continue;
+            if (!isCLI() && $initializer->cgi === false)
+                continue;
+
             $initializer->setApp(app());
             $initializer->preinit();
         }
@@ -26,6 +31,11 @@ trait Initializable
     public function init()
     {
         foreach ($this->initializers as $initializer) {
+            if (isCLI() && $initializer->cgi === true)
+                continue;
+            if (!isCLI() && $initializer->cgi === false)
+                continue;
+
             $initializer->setApp(app());
             $initializer->init();
         }
@@ -34,6 +44,11 @@ trait Initializable
     public function afterinit()
     {
         foreach ($this->initializers as $initializer) {
+            if (isCLI() && $initializer->cgi === true)
+                continue;
+            if (!isCLI() && $initializer->cgi === false)
+                continue;
+
             $initializer->setApp(app());
             $initializer->afterinit();
         }

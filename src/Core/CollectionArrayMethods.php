@@ -22,9 +22,9 @@ trait CollectionArrayMethods
         return collection(array_map($callback, $this->array));
     }
 
-    public function filter(Closure $callback): array
+    public function filter(Closure $callback)
     {
-        return array_filter($this->array, $callback);
+        return collection(array_filter($this->array, $callback));
     }
 
     public function each(Closure $callback)

@@ -4,11 +4,12 @@
 namespace OSN\Framework\Http;
 
 
+use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Exceptions\PropertyNotFoundException;
 
 trait RequestValidator
 {
-    protected array $errors = [];
+    public array $errors = [];
     protected bool $fixFieldNames = true;
 
     protected function addError($field, $rule, $errmsg)
@@ -26,21 +27,8 @@ trait RequestValidator
         return empty($this->errors);
     }
 
-    public function hasField(string $field): bool
+    public function validate(array $customRules = null, bool $autoRedirect = false): bool
     {
-        try {
-            $value = $this->{$field};
-            return true;
-        }
-        catch (PropertyNotFoundException $e) {
-            return false;
-        }
-    }
-
-    public function validate(array $customRules = null): bool
-    {
-        session()->unset('__validation_errors');
-
         $rules = $customRules ?? $this->rules();
 
         foreach ($rules as $field => $ruleList) {
@@ -50,6 +38,9 @@ trait RequestValidator
             catch (PropertyNotFoundException $e) {
                 $notSet = true;
             }
+
+            if (isset($notSet))
+                $value = null;
 
             $readableField = trim(str_replace('_', ' ', $field));
 
@@ -103,6 +94,24 @@ trait RequestValidator
         }
 
         if (!empty($this->getErrors())) {
+            session()->set('__validation_errors', $this->getErrors());
+
+            if ($autoRedirect) {
+                if (method_exists($this, 'handleInvalid')) {
+                    $this->handleInvalid();
+                }
+                else {
+                    if ($this->header('Referer')) {
+                        header("HTTP/1.1 406 Not Acceptable");
+                        header("Location: " . $this->header('Referer'));
+                        exit();
+                    }
+                    else {
+                        throw new HTTPException(406);
+                    }
+                }
+            }
+
             return false;
         }
 

@@ -20,7 +20,7 @@ class Migrations
         $this->db = App::db();
     }
 
-    public function applyAll()
+    public function applyAll(Closure $callback1 = null, Closure $callback2 = null, Closure $callback3 = null)
     {
         asort($this->migrations);
         foreach ($this->migrations as $migrationFile) {
@@ -29,7 +29,8 @@ class Migrations
 
             $migrationClass = explode(".", $migrationFile)[0];
 
-            echo "\033[1;33mApplying migration\033[0m: $migrationClass\n";
+            if ($callback1 !== null)
+                $callback1($migrationClass);
 
             include_once $this->path . $migrationFile;
 
@@ -37,15 +38,18 @@ class Migrations
             $migration = new $migrationClass();
 
             if($migration->up($this->db) === false) {
-                echo "\033[1;31m[!]\033[0m: Migration is already up: $migrationClass\n";
+                if ($callback3 !== null)
+                    $callback3($migrationClass);
+
                 continue;
             }
 
-            echo "\033[1;32mApplied migration\033[0m: $migrationClass\n";
+            if ($callback2 !== null)
+                $callback2($migrationClass);
         }
     }
 
-    public function reset()
+    public function reset(Closure $callback1 = null, Closure $callback2 = null, Closure $callback3 = null)
     {
         rsort($this->migrations);
         foreach ($this->migrations as $migrationFile) {
@@ -53,18 +57,23 @@ class Migrations
                 continue;
 
             $migrationClass = explode(".", $migrationFile)[0];
-            echo "\033[1;33mRolling back migration\033[0m: $migrationClass\n";
+
+            if ($callback1 !== null)
+                $callback1($migrationClass);
 
             include_once $this->path . $migrationFile;
 
             $migration = new $migrationClass();
 
             if($migration->down($this->db) === false) {
-                echo "\033[1;31m[!]\033[0m: Migration is not applied: $migrationClass\n";
+                if ($callback3 !== null)
+                    $callback3($migrationClass);
+
                 continue;
             }
 
-            echo "\033[1;32mRolled back migration\033[0m: $migrationClass\n";
+            if ($callback2 !== null)
+                $callback2($migrationClass);
         }
     }
 }

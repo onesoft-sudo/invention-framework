@@ -4,53 +4,69 @@
 namespace OSN\Framework\Core;
 
 
-use OSN\Envoy\Exception;
-use OSN\Envoy\ParseENV;
+use App\Events\AppRunningCompleteEvent;
+use App\Events\JobEvent;
+use Dotenv\Dotenv;
+use OSN\Framework\Cache\Cache;
+use OSN\Framework\Events\BuiltIn\AppRunCompleteEvent;
+use OSN\Framework\Events\TriggersEvent;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
+use OSN\Framework\Routing\Router;
 use OSN\Framework\View\View;
 
 /**
  * Class App
+ *
  * @package App\Core
  */
-class App
+class App extends \OSN\Framework\Foundation\App
 {
-    use Initializable;
-
-    public Config $config;
-
-    public static self $app;
-
     public Router $router;
     public Request $request;
     public Response $response;
-    public Database $db;
     public Session $session;
 
-    public array $env = [];
-
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    public function __construct(string $rootpath = ".")
+    public function boot()
     {
-        $this->env = (new ParseENV())->parseFile($rootpath . "/.env");
-        self::$app = $this;
-        $this->config = new Config($rootpath . '/' . $this->env['CONF_DIR']);
-        $this->config->root_dir = $rootpath;
-        self::$app = $this;
-        $this->loadInitializers();
-        $this->preinit();
-
+        $this->session = new Session();
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
-        $this->session = new Session();
-        $this->db = new Database($this->env);
-        self::$app = $this;
-        $this->init();
+
+        $this->bindings[Request::class] = [
+            'callback' => fn() => $this->request,
+            'once' => true,
+            'prop' => 'request'
+        ];
+
+        $this->bindings[Response::class] = [
+            'callback' => fn() => $this->response,
+            'once' => true,
+            'prop' => 'response'
+        ];
+
+        $this->bindings[Config::class] = [
+            'callback' => fn() => $this->config,
+            'once' => true,
+            'prop' => 'config'
+        ];
+
+        $this->bindings[Session::class] = [
+            'callback' => fn() => $this->session,
+            'once' => true,
+            'prop' => 'session'
+        ];
+
+        $this->bindings[Router::class] = [
+            'callback' => fn() => $this->router,
+            'once' => true,
+            'prop' => 'router'
+        ];
     }
 
     public static function session(): Session
@@ -99,6 +115,9 @@ class App
             echo new View('errors.exception', [
                 "exception" => $e
             ], null);
+        }
+        finally {
+            parent::run();
         }
     }
 }

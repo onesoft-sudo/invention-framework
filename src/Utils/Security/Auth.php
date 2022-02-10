@@ -11,7 +11,7 @@ class Auth
 {
     public function isAuthenticated(): bool
     {
-        return App::session()->get("uid") !== false;
+        return App::session()->get("uid") !== null;
     }
 
     /**

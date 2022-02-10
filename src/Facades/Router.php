@@ -6,15 +6,15 @@ use OSN\Framework\Core\App;
 use OSN\Framework\Core\Facade;
 
 /**
- * @method static get(string $route, array $array)
- * @method static post(string $route, array $array)
- * @method static put(string $route, array $array)
- * @method static patch(string $route, array $array)
- * @method static delete(string $route, array $array)
+ * @method static get(string $route, callable $callback): Route
+ * @method static post(string $route, callable $callback): Route
+ * @method static put(string $route, callable $callback): Route
+ * @method static patch(string $route, callable $callback): Route
+ * @method static delete(string $route, callable $callback): Route
  */
 class Router extends Facade
 {
-    protected static string $className = \OSN\Framework\Core\Router::class;
+    protected static string $className = \OSN\Framework\Routing\Router::class;
     protected static bool $override = true;
 
     public static function init($args)

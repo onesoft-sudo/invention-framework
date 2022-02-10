@@ -109,14 +109,14 @@ trait ResponseTrait
         $this->setStatusFromCode($code);
     }
 
-    public function getStatusFromCode(int $code)
+    public static function getStatusFromCode(int $code)
     {
         return static::$responseCodes[$code] ?? 'Unknown Status Code';
     }
 
     public function setStatusFromCode(int $code)
     {
-        $this->setStatusText($this->getStatusFromCode($code));
+        $this->setStatusText(static::getStatusFromCode($code));
     }
 
     /**

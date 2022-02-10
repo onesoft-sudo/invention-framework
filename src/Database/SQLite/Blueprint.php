@@ -16,6 +16,11 @@ class Blueprint extends CommonBlueprint
         return $col;
     }
 
+    public function unsignedBigInt(string $column)
+    {
+        return $this->add("$column UNSIGNED BIG INT", '', '', false);
+    }
+
     public function primaryKey(string $col): ?CommonColumn
     {
         foreach ($this->columns as $column) {

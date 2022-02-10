@@ -4,47 +4,70 @@
 namespace OSN\Framework\Http;
 
 
+use Closure;
+use OSN\Framework\Routing\Route;
+
 trait HTTPMethodRouterHelper
 {
-    public function addRoute(string $method, string $route, $callback)
+    public function addRoute(string $method, string $route, $callback): Route
     {
-        $this->routes[$method][$route] = $callback;
+        $routeObject = new Route($method, $route, $callback);
+        $this->routes[] = $routeObject;
+        return $routeObject;
     }
 
     public function get(string $route, $callback)
     {
-        $this->addRoute("GET", $route, $callback);
+        return $this->addRoute("GET", $route, $callback);
     }
 
     public function post(string $route, $callback)
     {
-        $this->addRoute("POST", $route, $callback);
+        return $this->addRoute("POST", $route, $callback);
     }
 
     public function put(string $route, $callback)
     {
-        $this->addRoute("PUT", $route, $callback);
+        return $this->addRoute("PUT", $route, $callback);
     }
 
     public function patch(string $route, $callback)
     {
-        $this->addRoute("PATCH", $route, $callback);
+        return $this->addRoute("PATCH", $route, $callback);
     }
 
     public function delete(string $route, $callback)
     {
-        $this->addRoute("DELETE", $route, $callback);
+        return $this->addRoute("DELETE", $route, $callback);
     }
 
-    public function hasRoute(string $route, string $givenMethod = '')
+    /**
+     * @param string $givenPath
+     * @param string $givenMethod
+     * @return false|Route
+     */
+    public function findRoute(string $givenPath, string $givenMethod = '')
     {
-        foreach ($this->routes as $method => $routes) {
-            if (array_key_exists($route, $routes)) {
-                if ($givenMethod != "" && $method != $givenMethod){
-                    continue;
+        foreach ($this->routes as $route) {
+            if ($route->path() === $givenPath || $route->matches($givenPath)) {
+                if ($givenMethod === '') {
+                    return $route;
                 }
+                else {
+                    if ($route->method() == $givenMethod)
+                        return $route;
+                }
+            }
+        }
 
-                return ["method" => $method, "route" => $route];
+        return false;
+    }
+
+    public function findByLogic(Closure $closure)
+    {
+        foreach ($this->routes as $route) {
+            if (call_user_func_array($closure, [$route]) === true) {
+                return $route;
             }
         }
 

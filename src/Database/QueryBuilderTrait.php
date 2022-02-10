@@ -165,6 +165,12 @@ trait QueryBuilderTrait
         return $this->addQuery("$wh2 $cond", true);
     }
 
+    /**
+     * @param $cond
+     * @param null $valueOrMode
+     * @return Query|QueryBuilderTrait|null
+     * @todo
+     */
     public function where($cond, $valueOrMode = null)
     {
         if (is_string($cond) && $valueOrMode !== null) {
@@ -203,10 +209,27 @@ trait QueryBuilderTrait
 
     public function orderBy($col, $desc = false)
     {
-        $this->addQuery("ORDER BY $col", true);
+        $arr = $col;
 
-        if ($desc)
-            $this->addQuery("DESC");
+        if (!is_array($col)) {
+            $arr = [
+                [$col, $desc]
+            ];
+        }
+
+        if (!isset($arr[0][0])) {
+            $arr = [$arr];
+        }
+
+        foreach ($arr as $i => $value) {
+            if ($i === 0)
+                $this->addQuery("ORDER BY");
+            else
+                $this->addQuery(", ");
+
+            $this->addQuery("{$value[0]}");
+            $this->addQuery(isset($value[1]) && $value[1] === true ? "DESC" : "");
+        }
 
         return $this;
     }
@@ -250,5 +273,11 @@ trait QueryBuilderTrait
     public function prepare()
     {
         return $this->db->prepare($this->query);
+    }
+
+    public function custom($sql)
+    {
+        $this->query .= " $sql";
+        return $this;
     }
 }

@@ -20,9 +20,9 @@ class Response
 
     protected function setData()
     {
-        header("HTTP/{$this->httpVersion} {$this->getCode()} {$this->getStatusText()}");
+        @header("HTTP/{$this->httpVersion} {$this->getCode()} {$this->getStatusText()}");
         foreach ($this->headers as $header => $value) {
-            header("$header: $value");
+            @header("$header: $value");
         }
     }
 
@@ -41,7 +41,8 @@ class Response
     {
         $this->setData();
 
-        if ($this->getCode() > 299 && $this->getCode() < 400) {
+        if ($this->getCode() > 299 && $this->getCode() < 400 && server('APP_ENV') != 'testing') {
+            app()->dispatch('AppRunningComplete', [app()]);
             exit();
         }
 
@@ -53,5 +54,14 @@ class Response
         $this->setCode($code);
         $this->header('Location', $url);
         return $this;
+    }
+
+    public function redirectImmediately($header, $code = 302)
+    {
+        $text = $this->getStatusFromCode($code);
+        header("HTTP/{$this->httpVersion} $code $text");
+        header("Location: $header");
+        app()->dispatch('AppRunningComplete', [app()]);
+        exit();
     }
 }

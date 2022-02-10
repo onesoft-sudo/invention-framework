@@ -6,7 +6,11 @@ namespace OSN\Framework\Core;
 
 abstract class Initializer
 {
+    /**
+     * @var \OSN\Framework\Foundation\App
+     */
     protected $app;
+    public ?bool $cgi = null;
 
     abstract public function init();
     abstract public function preinit();

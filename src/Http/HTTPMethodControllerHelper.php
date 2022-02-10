@@ -25,15 +25,24 @@ trait HTTPMethodControllerHelper
                 $this->apiHandlers = $handlers;
             }
 
-            $this->get($route, [$controller, $this->apiHandlers['get'][0]]);
-            $this->get($route . "/view", [$controller, $this->apiHandlers['get'][1]]);
-            $this->post($route, [$controller, $this->apiHandlers['post']]);
-            $this->put($route, [$controller, $this->apiHandlers['put']]);
-            $this->patch($route, [$controller, $this->apiHandlers['patch']]);
-            $this->delete($route, [$controller, $this->apiHandlers['delete']]);
+            $array = explode("\\", $controller);
+            $name = strtolower(preg_replace('/Controller$/', '', end($array)));
+
+            $this->get($route, [$controller, $this->apiHandlers['get'][0]])->name($name . "." . $this->apiHandlers['get'][0]);
+            $this->get($route . "/view", [$controller, $this->apiHandlers['get'][1]])->name($name . "." . $this->apiHandlers['get'][1]);
+            $this->post($route, [$controller, $this->apiHandlers['post']])->name($name . "." . $this->apiHandlers['post'][0]);
+            $this->put($route, [$controller, $this->apiHandlers['put']])->name($name . "." . $this->apiHandlers['put'][0]);
+            $this->patch($route, [$controller, $this->apiHandlers['patch']])->name($name . "." . $this->apiHandlers['patch'][0]);
+            $this->delete($route, [$controller, $this->apiHandlers['delete']])->name($name . "." . $this->apiHandlers['delete'][0]);
         }
     }
 
+    /**
+     * @param string $route
+     * @param string $controller
+     * @param array|null $handlers
+     * @todo
+     */
     public function assignWebController(string $route, string $controller, ?array $handlers = null)
     {
         if (class_exists($controller)) {
