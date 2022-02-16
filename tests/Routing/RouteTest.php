@@ -62,7 +62,14 @@ class RouteTest extends TestCase
     {
         App::$app->router->pushRoute($this->route);
         $route = route('tests.main');
-        $this->assertSame($this->route, $route);
+        //dd($this->route, $route);
+
+        $this->assertSame($this->route->name(), $route->name());
+        $this->assertSame($this->route->path(), $route->path());
+        $this->assertSame($this->route->method(), $route->method());
+        $this->assertSame($this->route->middleware(), $route->middleware());
+        $this->assertSame($this->route->action(), $route->action());
+        $this->assertSame($this->route->params(), $route->params());
     }
 
     /** @test */
@@ -70,6 +77,6 @@ class RouteTest extends TestCase
     {
         App::$app->router->pushRoute($this->route);
         $route = route('tests.bla-bla-bla');
-        $this->assertNotSame($this->route, $route);
+        $this->assertSame(null, $route);
     }
 }

@@ -343,7 +343,7 @@ if (!function_exists('old')) {
 }
 
 if (!function_exists('route')) {
-    function route($name, ...$args)
+    function route($name, ...$args): ?Route
     {
         /**
          * @var Route $route
@@ -357,6 +357,9 @@ if (!function_exists('route')) {
 
             return $route->name() == $name && $cond;
         });
+
+        if (!$route instanceof Route)
+            return null;
 
         $path = $route->path();
 
