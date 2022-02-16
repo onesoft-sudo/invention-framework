@@ -1,15 +1,31 @@
 {
-  "name": "$vendor_name$/$package_name$",
-  "description": "$description$",
-  "minimum-stability": "$stability$",
-  "license": "$license$",
-  "authors": [
-    {
-      "name": "$author$",
-      "email": "$email$"
+    "name": "osn/invention",
+    "type": "library",
+    "description": "The Invention Framework.",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Ar Rakin",
+            "email": "rakinar2@gmail.com"
+        }
+    ],
+    "require": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always"
+    },
+    "autoload": {
+        "files": [
+            "helpers/helpers.php"
+        ],
+        "psr-4": {
+            "OSN\\Framework\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OSN\\Framework\\Tests\\": "tests/"
+        }
     }
-  ],
-  "require": {
-    $END$
-  }
 }
