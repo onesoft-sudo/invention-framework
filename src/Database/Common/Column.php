@@ -41,6 +41,11 @@ abstract class Column
         return $this->append(" NOT NULL", false);
     }
 
+    public function unsigned(): self
+    {
+        return $this->append(" UNSIGNED", false);
+    }
+
     public function unique(): self
     {
         return $this->append(" UNIQUE", false);

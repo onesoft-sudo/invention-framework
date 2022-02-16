@@ -103,6 +103,11 @@ abstract class Blueprint
         return $this->add($this->renderType("INTEGER", $length), $column);
     }
 
+    public function bigint(string $column, int $length = 0): Column
+    {
+        return $this->add($this->renderType("BIGINT", $length), $column);
+    }
+
     public function foreignIdsFor(array $models, string $postfix = '_id')
     {
         foreach ($models as $k => $model) {

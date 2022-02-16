@@ -195,8 +195,8 @@ class Schema
             $this->exec("ALTER TABLE $table DROP INDEX $index");
     }
 
-    private function exec(string $string)
+    public function exec(string $string)
     {
-        return $this->db->pdo->exec($string);
+        return $this->db->exec($string);
     }
 }

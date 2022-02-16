@@ -3,6 +3,7 @@
 
 namespace OSN\Framework\Database;
 
+use Closure;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use OSN\Framework\Core\Collection;
@@ -17,6 +18,11 @@ abstract class Factory
     protected Generator $faker;
     protected int $count = 1;
     protected int $maxCount = 100;
+
+    /**
+     * @var Closure[]
+     */
+    protected array $states = [];
 
     abstract protected function define(): array;
 
@@ -39,6 +45,10 @@ abstract class Factory
 
             $model = new $this->model();
             $definition = $this->define();
+
+            foreach ($this->states as $state) {
+                $definition = array_merge($definition, call_user_func_array($state, [$definition]));
+            }
 
             foreach ($definition as $field => $value) {
                 $model->$field = $value;
@@ -69,6 +79,12 @@ abstract class Factory
         });
 
         return $models;
+    }
+
+    public function state(Closure $callback): self
+    {
+        $this->states[] = $callback;
+        return $this;
     }
 
     public static function newInstance(): self
