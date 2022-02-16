@@ -4,11 +4,25 @@
 namespace OSN\Framework\Container;
 
 
-class Container
+
+use OSN\Framework\Exceptions\ContainerAbstractNotFoundException;
+use OSN\Framework\Foundation\App;
+use \OSN\Framework\Contracts\Container as ContainerInterface;
+
+class Container implements ContainerInterface
 {
     protected array $bindings = [];
 
-    public function bind(string $abstract, callable $callback, string $prop = null, bool $once = false): self
+    protected function loadBindingsFromConfig()
+    {
+        $bindings = config('bindings') ?? [];
+
+        foreach ($bindings as $abstract => $binding) {
+            $this->bind($abstract, fn() => ($binding['object'] ?? null), $binding['prop'] ?? null, $binding['once'] ?? false);
+        }
+    }
+
+    public function bind($abstract, \Closure $callback, ?string $prop = null, bool $once = false): self
     {
         $prop = $prop ?? $abstract;
 
@@ -63,7 +77,7 @@ class Container
         return $this->getParamTypes(new \ReflectionFunction($function), true, $associative);
     }
 
-    public function bindOnce(string $abstract, callable $callback, string $prop = null): self
+    public function bindOnce($abstract, \Closure $callback, string $prop = null): self
     {
         return $this->bind($abstract, $callback, $prop, true);
     }
@@ -98,23 +112,23 @@ class Container
         return $paramsToPass;
     }
 
-    public function has(string $abstract): bool
+    public function has(string $id): bool
     {
         try {
-            $this->resolve($abstract);
+            $this->resolve($id);
             return true;
         }
-        catch (\RuntimeException $e) {
+        catch (ContainerAbstractNotFoundException $e) {
             if ($e->getCode() === 23) {
                 return false;
             }
             else {
-                throw new \RuntimeException($e->getMessage(), $e->getCode());
+                throw new ContainerAbstractNotFoundException($e->getMessage(), $e->getCode());
             }
         }
     }
 
-    public function resolve(string $abstract)
+    public function resolve($abstract)
     {
         $a = $this->bindings[$abstract] ?? null;
 
@@ -126,7 +140,7 @@ class Container
         }
 
         if ($a === null) {
-            throw new \RuntimeException("Unresolvable dependency: $abstract", 23);
+            throw new ContainerAbstractNotFoundException("Unresolvable dependency: $abstract", 23);
         }
 
         if (!$a['once']) {
@@ -134,5 +148,10 @@ class Container
         }
 
         return $this->{$a['prop']};
+    }
+
+    public function get($id)
+    {
+        return $this->resolve($id);
     }
 }
