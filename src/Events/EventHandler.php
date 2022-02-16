@@ -14,8 +14,8 @@ interface EventHandler
     /**
      * Handle the event.
      *
-     * @param EventInterface $event
+     * @param \OSN\Framework\Contracts\Event $event
      * @return mixed
      */
-    public function handle(EventInterface $event);
+    public function handle(\OSN\Framework\Contracts\Event $event);
 }

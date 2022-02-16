@@ -1,18 +1,18 @@
 <?php
 
 
-namespace OSN\Framework\Events;
+namespace OSN\Framework\Contracts;
 
 /**
- * Interface EventInterface
+ * Interface Event
  *
- * @package OSN\Framework\Events
+ * @package OSN\Framework\Contracts\Event
  * @author Ar Rakin <rakinar2@gmail.com>
  */
-interface EventInterface
+interface Event
 {
     /**
-     * EventInterface constructor.
+     * Event constructor.
      *
      * @param array $data
      */
@@ -26,13 +26,6 @@ interface EventInterface
     public function execute();
 
     /**
-     * Prevent the event's default behaviour.
-     *
-     * @return mixed
-     */
-    public function prevent();
-
-    /**
      * Stops executing the event.
      *
      * @return mixed
@@ -44,7 +37,7 @@ interface EventInterface
      *
      * @return void
      */
-    public function fired();
+    public function setFired();
 
     /**
      * Get the handler(s) of the event.
@@ -70,7 +63,7 @@ interface EventInterface
     public static function addHandler(callable $callback);
 
     /**
-     * Fire the event handlers.
+     * Call the event handlers.
      *
      * @return mixed
      */

@@ -3,8 +3,9 @@
 
 namespace OSN\Framework\Events;
 
+use Carbon\Carbon;
 use OSN\Framework\Exceptions\EventException;
-use phpDocumentor\Reflection\Types\Callable_;
+use OSN\Framework\Contracts\Event as EventInterface;
 
 /**
  * Class Event
@@ -21,27 +22,27 @@ abstract class Event implements EventInterface
      */
     protected static array $handlers = [];
 
-    public string $timestamp;
+    public Carbon $timestamp;
     public int $statusCode;
 
     public function __construct(array $data = [])
     {
         $this->fired = false;
 
-        $this->timestamp = date(DATE_ATOM);
+        $this->timestamp = Carbon::now();
         $this->statusCode = $data["statusCode"] ?? 0;
     }
 
     /**
-     * @return false|string
+     * @return Carbon
      * @author Ar Rakin <rakinar2@gmail.com>
      */
-    public function timestamp()
+    public function timestamp(): Carbon
     {
         return $this->timestamp;
     }
 
-    public function fired()
+    public function setFired()
     {
         $this->fired = true;
     }
@@ -94,14 +95,11 @@ abstract class Event implements EventInterface
     public static function fire(array $data = [])
     {
         $event = new static($data);
-        $event->fired();
+        $event->setFired();
         return $event->fireHandlers();
     }
 
     public function execute()
-    {}
-
-    public function prevent()
     {}
 
     public function stop()
