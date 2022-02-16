@@ -5,11 +5,12 @@ namespace OSN\Framework\Container;
 
 
 
+use ArrayAccess;
 use OSN\Framework\Exceptions\ContainerAbstractNotFoundException;
 use OSN\Framework\Foundation\App;
 use \OSN\Framework\Contracts\Container as ContainerInterface;
 
-class Container implements ContainerInterface
+class Container implements ContainerInterface, ArrayAccess
 {
     protected array $bindings = [];
 
@@ -153,5 +154,56 @@ class Container implements ContainerInterface
     public function get($id)
     {
         return $this->resolve($id);
+    }
+
+    public function remove($abstract)
+    {
+        if (!$this->has($abstract))
+            throw new ContainerAbstractNotFoundException("Unresolvable dependency: $abstract", 23);
+
+        if(isset($this->bindings[$abstract]))
+            unset($this->bindings[$abstract]);
+
+        if(isset($this->$abstract))
+            unset($this->$abstract);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset): bool
+    {
+        return isset($this->$offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
+    {
+        return $this->resolve($offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)
+    {
+        $this->bindOnce($offset, fn() => $value);
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
+    {
+        $this->remove($offset);
     }
 }

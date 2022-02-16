@@ -227,9 +227,10 @@ abstract class Model implements JsonSerializable
     public static function destroy(int $primaryValue): self
     {
         $model = new static();
+        $data = static::find($primaryValue);
         $model->_table->delete()->where($model->primaryColumn, $primaryValue)->execute();
 
-        return $model;
+        return $data;
     }
 
     protected static function isCUD($name): bool

@@ -5,14 +5,16 @@ namespace OSN\Framework\Core;
 
 
 use ArrayAccess;
+use Iterator;
 use JsonSerializable;
 use OSN\Framework\Exceptions\CollectionException;
 
-class Collection implements JsonSerializable, ArrayAccess
+class Collection implements JsonSerializable, ArrayAccess, Iterator
 {
     use CollectionArrayMethods;
 
     protected array $array;
+    protected int $pos = 0;
 
     /**
      * Collection constructor.
@@ -109,6 +111,7 @@ class Collection implements JsonSerializable, ArrayAccess
      * @param mixed $offset
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset): bool
     {
         return isset($this->array[$offset]);
@@ -118,6 +121,7 @@ class Collection implements JsonSerializable, ArrayAccess
      * @param mixed $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->array[$offset];
@@ -127,6 +131,7 @@ class Collection implements JsonSerializable, ArrayAccess
      * @param mixed $offset
      * @param mixed $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->array[$offset] = $value;
@@ -135,6 +140,7 @@ class Collection implements JsonSerializable, ArrayAccess
     /**
      * @param mixed $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->array[$offset]);
@@ -148,5 +154,44 @@ class Collection implements JsonSerializable, ArrayAccess
     public function udiff(Collection $newUsers, \Closure $callback)
     {
         return array_udiff($this->array, $newUsers->array, $callback);
+    }
+
+    /**
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
+    public function current()
+    {
+        return $this->array[$this->pos];
+    }
+
+    #[\ReturnTypeWillChange]
+    public function next()
+    {
+        $this->pos++;
+    }
+
+    /**
+     * @return bool|float|int|string|null
+     */
+    #[\ReturnTypeWillChange]
+    public function key()
+    {
+        return $this->pos;
+    }
+
+    /**
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
+    public function valid(): bool
+    {
+        return isset($this->array[$this->pos]);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function rewind()
+    {
+        $this->pos = 0;
     }
 }

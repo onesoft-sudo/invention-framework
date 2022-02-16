@@ -7,6 +7,7 @@ use OSN\Framework\Core\Facade;
 /**
  * @method static create(string $string, \Closure $param)
  * @method static dropIfExists(string $string)
+ * @method static exec(string $string)
  */
 class Schema extends Facade
 {

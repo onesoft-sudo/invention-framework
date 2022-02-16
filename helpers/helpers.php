@@ -5,6 +5,7 @@ use OSN\Framework\Core\Model;
 use OSN\Framework\Events\EventInterface;
 use OSN\Framework\Exceptions\EventException;
 use OSN\Framework\Routing\Route;
+use OSN\Framework\Utils\Arrayable;
 use OSN\Framework\Utils\Security\Auth;
 use OSN\Framework\Core\App;
 use OSN\Framework\Core\Collection;
@@ -223,7 +224,7 @@ if (!function_exists("config")) {
             return app()->config;
         }
 
-        return app()->config->$c;
+        return app()->config->$c ?? null;
     }
 }
 
@@ -342,11 +343,31 @@ if (!function_exists('old')) {
 }
 
 if (!function_exists('route')) {
-    function route($name, $method = 'GET')
+    function route($name, ...$args)
     {
-        return App::$app->router->findByLogic(function (Route $route) use ($method, $name) {
-            return $route->name() == $name && $route->method() == $method;
+        /**
+         * @var Route $route
+         */
+        $route = App::$app->router->findByLogic(function (Route $route) use ($name) {
+            $cond = true;
+//
+//            if ($method != null) {
+//                $cond = $route->method() == $method;
+//            }
+
+            return $route->name() == $name && $cond;
         });
+
+        $path = $route->path();
+
+        if (preg_match_all("/(\(.*?\))/", $route->path(), $matches)) {
+            array_shift($matches);
+            foreach ($matches as $i => $match) {
+                $path = str_replace($match[0], $args[$i] ?? '', $path);
+            }
+        }
+
+        return new Route($route->method(), $path, $route->action(), $route->name(), $route->middleware());
     }
 }
 
@@ -387,13 +408,18 @@ if (!function_exists('fire')) {
             $event->setHandler($handler);
 
         $data = $event->fireHandlers();
-        $event->fired();
+        $event->setFired();
 
         return $data;
     }
 }
 
-
+if (!function_exists('to_array')) {
+    function to_array(Arrayable $arrayable): array
+    {
+        return $arrayable->toArray();
+    }
+}
 
 
 

@@ -6,17 +6,18 @@ namespace OSN\Framework\Console;
 
 class Generator
 {
-    public function generate($path, $template, ...$args)
+    public function generate($path, $template, $call1, $call2, ...$args)
     {
         $template = $this->getTemplate($template);
         $content = sprintf($template, ...$args);
 
         if (file_exists($path)) {
-            echo "[!] Cannot generate '".basename($path)."': File exists\n";
+            $call2("File exists");
             exit(-1);
         }
 
         file_put_contents($path, $content);
+        $call1();
     }
 
     public function getTemplate($t)

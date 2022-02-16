@@ -4,7 +4,9 @@
 namespace OSN\Framework\Exceptions;
 
 
-class ContainerAbstractNotFoundException
+use Psr\Container\NotFoundExceptionInterface;
+
+class ContainerAbstractNotFoundException extends \RuntimeException implements NotFoundExceptionInterface
 {
 
 }

@@ -22,7 +22,7 @@ interface DataTypeInterface
 
     /**
      * @param $value
-     * @return mixed
+     * @return static|void
      */
     public function set($value);
 }

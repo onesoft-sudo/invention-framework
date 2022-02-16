@@ -8,7 +8,6 @@ use OSN\Framework\Core\App;
 use OSN\Framework\Core\Controller;
 use OSN\Framework\Exceptions\FileNotFoundException;
 use OSN\Framework\Exceptions\HTTPException;
-use OSN\Framework\Facades\FunctionUtils;
 use OSN\Framework\Http\HTTPMethodControllerHelper;
 use OSN\Framework\Http\HTTPMethodRouterHelper;
 use OSN\Framework\Http\Request;
@@ -44,6 +43,11 @@ class Router
     public function routes(): array
     {
         return $this->routes;
+    }
+
+    public function pushRoute(Route $route)
+    {
+        $this->routes[] = $route;
     }
 
     /**

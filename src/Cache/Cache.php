@@ -20,7 +20,7 @@ class Cache
         $this->purge();
     }
 
-    public function mkdir(string $dir, int $mode = 0755): bool
+    protected function mkdir(string $dir, int $mode = 0755): bool
     {
         return mkdir($this->cachedir . "/" . $dir, $mode);
     }
@@ -35,7 +35,7 @@ class Cache
         return $this->cachedir . '/raw';
     }
 
-    protected function addFile($file)
+    protected function addFile($file): string
     {
         $filename = "";
 
@@ -107,7 +107,7 @@ class Cache
         $this->update();
     }
 
-    public function store($id, $value, $lifetime = null, bool $file = false): bool
+    public function put($id, $value, $lifetime = null, bool $file = false): bool
     {
         if (!$file) {
             $this->add([
@@ -128,6 +128,19 @@ class Cache
         }
 
         return true;
+    }
+
+    public function putFile($id, $path, $lifetime = null): bool
+    {
+        return $this->put($id, $path, $lifetime, true);
+    }
+
+    public function remove($id)
+    {
+        if (isset($this->caches->$id))
+            $this->caches->$id->expires_at = now();
+
+        $this->purge();
     }
 
     public function getFile($id): string

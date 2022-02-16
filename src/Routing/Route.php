@@ -8,6 +8,7 @@ use OSN\Framework\Core\Middleware;
 
 /**
  * Class Route
+ *
  * @package OSN\Framework\Routing
  * @author Ar Rakin <rakinar2@gmail.com>
  * @todo Add group() method
@@ -164,8 +165,12 @@ class Route
     {
         $bool = preg_match_all("/^" . addcslashes($this->path, '/$^') . "$/i", $string, $this->params);
         array_shift($this->params);
-        $this->params = array_map(fn($value) => $value[0], $this->params);
-        return $bool;
+
+        $this->params = array_map(function($value) {
+            return $value[0] ?? null;
+        }, $this->params);
+
+        return (bool) $bool;
     }
 
     public function params(): array

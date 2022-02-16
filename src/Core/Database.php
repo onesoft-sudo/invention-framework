@@ -68,6 +68,11 @@ class Database
         return $this->pdo->query($sql);
     }
 
+    public function exec($sql)
+    {
+        return $this->pdo->exec($sql);
+    }
+
     public function queryFetch($sql, $params = null): array
     {
         return $this->pdo->query($sql)->fetchAll($params !== null ? $params : PDO::FETCH_ASSOC);

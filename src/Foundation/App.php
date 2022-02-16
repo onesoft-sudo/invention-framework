@@ -51,6 +51,7 @@ abstract class App extends Container
             'prop' => 'db'
         ];
 
+        $this->loadBindingsFromConfig();
         $this->boot();
         self::$app = $this;
         $this->init();
