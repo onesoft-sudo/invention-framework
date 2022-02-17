@@ -3,6 +3,7 @@
 
 namespace OSN\Framework\Cache;
 
+use OSN\Framework\Utils\Arrayable;
 
 class Cache
 {
