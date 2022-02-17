@@ -19,12 +19,21 @@ class Database
     {
         $this->env = $env;
 
+        if (isset($env['DB_AUTO_CONNECT']) && $env['DB_AUTO_CONNECT'] === false)  {
+            return;
+        }
+
         $vendor = $this->getVendor();
         $dsn = $vendor . ":";
 
         if ($vendor === 'mariadb')
             $dsn = 'mysql:';
 
+        $this->init($env, $vendor, $dsn);
+    }
+
+    public function init($env, $vendor, $dsn)
+    {
         if ($vendor === 'mysql' || $vendor === 'mariadb') {
             $dsn .= 'host=' . $env["DB_HOST"] . ';port=' . $env["DB_PORT"] . ';dbname=' . $env["DB_NAME"];
             $this->pdo = new PDO($dsn, $env['DB_USER'], $env["DB_PASSWORD"]);

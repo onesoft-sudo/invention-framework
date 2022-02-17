@@ -358,15 +358,19 @@ if (!function_exists('route')) {
             return $route->name() == $name && $cond;
         });
 
-        if (!$route instanceof Route)
+        if(!$route instanceof Route)
             return null;
 
         $path = $route->path();
 
         if (preg_match_all("/(\(.*?\))/", $route->path(), $matches)) {
             array_shift($matches);
+
+            if (count($matches) === 1)
+                $matches = $matches[0];
+
             foreach ($matches as $i => $match) {
-                $path = str_replace($match[0], $args[$i] ?? '', $path);
+                $path = preg_replace('/' . preg_quote($match, '/') . '/', $args[$i] ?? '', $path, 1);
             }
         }
 

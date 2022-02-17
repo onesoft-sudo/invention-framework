@@ -9,11 +9,11 @@ use ArrayAccess;
 class Config implements ArrayAccess
 {
     protected array $conf;
-    protected string $conf_dir;
+    protected string $conf_file;
 
-    public function __construct($rootpath)
+    public function __construct($file)
     {
-        $this->conf_dir = $rootpath;
+        $this->conf_file = $file;
         $this->load();
     }
 
@@ -29,18 +29,7 @@ class Config implements ArrayAccess
 
     protected function load()
     {
-        $conffiles = scandir($this->conf_dir);
-        $conf = [];
-
-        foreach ($conffiles as $conffile) {
-            $conffile = $this->conf_dir . '/' . $conffile;
-            if (is_file($conffile) && pathinfo($conffile, PATHINFO_EXTENSION) == 'php') {
-                $arrConf = include($conffile);
-                $conf = array_merge($conf, $arrConf);
-            }
-        }
-
-        $this->conf = $conf;
+       $this->conf = require($this->conf_file);
     }
 
     public function getAll(): array

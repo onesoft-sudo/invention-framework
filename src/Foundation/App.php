@@ -24,13 +24,19 @@ abstract class App extends Container
 
     public array $env = [];
 
-    public function __construct(string $rootpath)
+    public function __construct(string $rootpath, array $env = [])
     {
-        $dotenv = Dotenv::createImmutable($rootpath);
-        $dotenv->load();
+        if (server('APP_TESTING') == '1') {
+            $_ENV = $env;
+        }
+        else {
+            $dotenv = Dotenv::createImmutable($rootpath);
+            $dotenv->load();
+        }
+
         $this->env = $_ENV;
         self::$app = $this;
-        $this->config = new Config($rootpath . '/' . $this->env['CONF_DIR']);
+        $this->config = new Config($rootpath . '/' . $this->env['CONF_FILE']);
         $this->config->root_dir = $rootpath;
         self::$app = $this;
         $this->loadInitializers();

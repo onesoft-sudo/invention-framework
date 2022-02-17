@@ -1,13 +1,13 @@
 <?php
 
-namespace OSN\Framework\Tests\Routing;
+namespace OSN\Framework\Tests\Feature\Routing;
 
 use OSN\Framework\Core\App;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
 use OSN\Framework\Routing\Route;
 use OSN\Framework\Routing\Router;
-use PHPUnit\Framework\TestCase;
+use OSN\Framework\Tests\Feature\TestCase;
 
 class RouteTest extends TestCase
 {
@@ -19,28 +19,12 @@ class RouteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->method = 'get';
         $this->path = '/user';
         $this->action = fn() => "Hello world!";
         $this->route = (new Route($this->method, $this->path, $this->action));
         $this->route->name('tests.main');
-        $this->appInit();
-    }
-
-    public function appInit()
-    {
-        App::$app = new class() extends App {
-            public \OSN\Framework\Routing\Router $router;
-            public \OSN\Framework\Http\Request $request;
-            public \OSN\Framework\Http\Response $response;
-
-            public function __construct()
-            {
-                $this->request = new Request();
-                $this->response = new Response();
-                $this->router = new Router($this->request, $this->response);
-            }
-        };
     }
 
     /** @test */
@@ -62,7 +46,6 @@ class RouteTest extends TestCase
     {
         App::$app->router->pushRoute($this->route);
         $route = route('tests.main');
-        //dd($this->route, $route);
 
         $this->assertSame($this->route->name(), $route->name());
         $this->assertSame($this->route->path(), $route->path());
@@ -78,5 +61,23 @@ class RouteTest extends TestCase
         App::$app->router->pushRoute($this->route);
         $route = route('tests.bla-bla-bla');
         $this->assertSame(null, $route);
+    }
+
+    /** @test */
+    public function route_helper_function_should_work_with_route_one_argument()
+    {
+        $this->route->path("/user/(\d+)");
+        App::$app->router->pushRoute($this->route);
+        $route = route('tests.main', 512);
+        $this->assertSame('/user/512', $route->path());
+    }
+
+    /** @test */
+    public function route_helper_function_should_work_with_route_multiple_arguments()
+    {
+        $this->route->path("/user/(\d+)/post/(\d+)-([A-Za-z0-9]+)");
+        App::$app->router->pushRoute($this->route);
+        $route = route('tests.main', 512, 2, "firstPost937");
+        $this->assertSame('/user/512/post/2-firstPost937', $route->path());
     }
 }
