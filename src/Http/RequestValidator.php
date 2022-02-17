@@ -70,7 +70,7 @@ trait RequestValidator
                     $pos = strpos($rule, ":") + 1;
                     $minValue = substr($rule, $pos);
 
-                    if (strlen($value) < $minValue) {
+                    if (strlen((string) $value) < $minValue) {
                         $this->addError($field, "min", "The minimum length of $readableField must be $minValue");
                     }
                 }
