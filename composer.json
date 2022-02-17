@@ -1,5 +1,5 @@
 {
-    "name": "osn/invention",
+    "name": "osn/invention-framework",
     "type": "library",
     "description": "The Invention Framework.",
     "license": "GPL-3.0-or-later",
