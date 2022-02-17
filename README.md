@@ -2,6 +2,8 @@
  
  
 # Invention Framework
+[![CodeFactor](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework/badge)](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework)
+
 The next level PHP framework.
 
 **Important: It is not recommended to use this framework in production until a stable version gets released.**
