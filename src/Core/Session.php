@@ -6,6 +6,8 @@ namespace OSN\Framework\Core;
 
 class Session
 {
+    protected array $purge = [];
+
     public function __construct()
     {
         @session_start();
@@ -72,7 +74,8 @@ class Session
         if ($msg === null)
             return null;
 
-        $this->unset($key);
+        $this->purge[] = $key;
+
         return $msg;
     }
 
@@ -85,5 +88,12 @@ class Session
     {
         session_unset();
         session_destroy();
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->purge as $key) {
+            $this->unset($key);
+        }
     }
 }
