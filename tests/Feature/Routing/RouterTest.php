@@ -4,17 +4,29 @@
 namespace OSN\Framework\Tests\Feature\Routing;
 
 
+use OSN\Framework\Core\Controller;
 use OSN\Framework\Exceptions\HTTPException;
+use OSN\Framework\Http\Request;
 use OSN\Framework\Tests\Feature\TestCase;
 
 class RouterTest extends TestCase
 {
+    protected string $route = '/test';
+    protected string $method = 'GET';
+
     protected function setUp(): void
     {
-        $_SERVER['REQUEST_URI'] = '/test';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = &$this->route;
+        $_SERVER['REQUEST_METHOD'] = &$this->method;
 
         parent::setUp();
+    }
+
+    protected function updateRequest()
+    {
+        $this->app->request->uri = $this->route;
+        $this->app->request->baseURI = $this->route;
+        $this->app->request->method = $this->method;
     }
 
     /** @test */
@@ -133,5 +145,54 @@ class RouterTest extends TestCase
         $this->expectExceptionCode(404);
 
         $this->app->router->resolve();
+    }
+
+    /** @test */
+    public function can_not_resolve_registered_routes_with_unsupported_method()
+    {
+        $str = 'Hello world!';
+
+        $this->app->router->post("/test", function () use ($str) {
+            return $str;
+        });
+
+        $this->expectException(HTTPException::class);
+        $this->expectExceptionCode(405);
+
+        $this->app->router->resolve();
+    }
+
+    /** @test */
+    public function router_is_working_with_one_route_argument()
+    {
+        $this->route = '/test/512';
+        $this->updateRequest();
+
+        $str = 'Hello world!';
+
+        $this->app->router->get("/test/(\d+)", function () use ($str) {
+            return $str;
+        });
+
+        $output = $this->app->router->resolve();
+
+        $this->assertSame($str, $output);
+    }
+
+    /** @test */
+    public function router_is_working_with_multiple_route_arguments()
+    {
+        $this->route = '/test/512/user/123/7-howToMakeThinks63';
+        $this->updateRequest();
+
+        $str = 'Hello world!';
+
+        $this->app->router->get("/test/(\d+)/user/(\d+)/(\d+)-([0-9A-Za-z]+)", function () use ($str) {
+            return $str;
+        });
+
+        $output = $this->app->router->resolve();
+
+        $this->assertSame($str, $output);
     }
 }
