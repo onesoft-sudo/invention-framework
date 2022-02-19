@@ -22,13 +22,6 @@ class RouterTest extends TestCase
         parent::setUp();
     }
 
-    protected function updateRequest()
-    {
-        $this->app->request->uri = $this->route;
-        $this->app->request->baseURI = $this->route;
-        $this->app->request->method = $this->method;
-    }
-
     /** @test */
     public function successfully_registered_a_route()
     {
@@ -194,5 +187,19 @@ class RouterTest extends TestCase
         $output = $this->app->router->resolve();
 
         $this->assertSame($str, $output);
+    }
+
+    /** @test */
+    public function router_findRoute_method_is_working()
+    {
+        $str = 'Hello world!';
+
+        $route1 = $this->app->router->get("/test", function () use ($str) {
+            return $str;
+        });
+
+        $route2 = $this->app->router->findRoute('/test');
+
+        $this->assertSame($route1, $route2);
     }
 }

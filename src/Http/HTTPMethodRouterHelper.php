@@ -40,37 +40,4 @@ trait HTTPMethodRouterHelper
     {
         return $this->addRoute("DELETE", $route, $callback);
     }
-
-    /**
-     * @param string $givenPath
-     * @param string $givenMethod
-     * @return false|Route
-     */
-    public function findRoute(string $givenPath, string $givenMethod = '')
-    {
-        foreach ($this->routes as $route) {
-            if ($route->path() === $givenPath || $route->matches($givenPath)) {
-                if ($givenMethod === '') {
-                    return $route;
-                }
-                else {
-                    if ($route->method() == $givenMethod)
-                        return $route;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public function findByLogic(Closure $closure)
-    {
-        foreach ($this->routes as $route) {
-            if (call_user_func_array($closure, [$route]) === true) {
-                return $route;
-            }
-        }
-
-        return false;
-    }
 }

@@ -37,45 +37,7 @@ class Request
 
     public function __construct(?array $data = null, bool $errmode_exception = true)
     {
-        if ($data === null) {
-            $data = [
-                "get" => $_GET,
-                "post" => $_POST,
-                "files" => $_FILES,
-                "method" => strtoupper(trim($_SERVER['REQUEST_METHOD'] ?? '')),
-                "uri" => $_SERVER['REQUEST_URI'] ?? '',
-                "protocol" => $_SERVER['SERVER_PROTOCOL'] ?? '',
-                "host" => $_SERVER["HTTP_HOST"] ?? '',
-                "ssl" => isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on',
-                "headers" => headers()
-            ];
-        }
-
-        $data['get'] = array_map(function ($val) {
-            return filter_var($val,FILTER_SANITIZE_SPECIAL_CHARS);
-        }, $data['get']);
-
-        $data['post'] = array_map(function ($val) {
-            return filter_var($val,FILTER_SANITIZE_SPECIAL_CHARS);
-        }, $data['post']);
-
-        $this->post = (object) $data["post"];
-        $this->get = (object) $data["get"];
-        $this->uploadedFiles = $data["files"];
-
-        $this->realMethod = $data["method"];
-        $this->method = $this->getMethod();
-        $this->uri = $data["uri"];
-        $this->baseURI = $this->getBaseURI($this->uri);
-        $this->protocol = $data["protocol"];
-        $this->host = $data["host"];
-        $this->hostname = $this->getHost($this->host);
-        $this->port = $this->getPort($this->host);
-        $this->ssl = $data["ssl"];
-        $this->queryString = $this->getQueryString($this->uri);
-
-        $this->headers = (object) $data["headers"];
-
+        $this->update($data);
         $this->errmode_exception = $errmode_exception;
 
         if (!empty($this->all()))
@@ -199,5 +161,47 @@ class Request
     public function hasField(string $field): bool
     {
         return $this->has($field);
+    }
+
+    public function update(?array $data = null)
+    {
+        if ($data === null) {
+            $data = [
+                "get" => $_GET,
+                "post" => $_POST,
+                "files" => $_FILES,
+                "method" => strtoupper(trim($_SERVER['REQUEST_METHOD'] ?? '')),
+                "uri" => $_SERVER['REQUEST_URI'] ?? '',
+                "protocol" => $_SERVER['SERVER_PROTOCOL'] ?? '',
+                "host" => $_SERVER["HTTP_HOST"] ?? '',
+                "ssl" => isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on',
+                "headers" => headers()
+            ];
+        }
+
+        $data['get'] = array_map(function ($val) {
+            return filter_var($val,FILTER_SANITIZE_SPECIAL_CHARS);
+        }, $data['get']);
+
+        $data['post'] = array_map(function ($val) {
+            return filter_var($val,FILTER_SANITIZE_SPECIAL_CHARS);
+        }, $data['post']);
+
+        $this->post = (object) $data["post"];
+        $this->get = (object) $data["get"];
+        $this->uploadedFiles = $data["files"];
+
+        $this->realMethod = $data["method"];
+        $this->method = $this->getMethod();
+        $this->uri = $data["uri"];
+        $this->baseURI = $this->getBaseURI($this->uri);
+        $this->protocol = $data["protocol"];
+        $this->host = $data["host"];
+        $this->hostname = $this->getHost($this->host);
+        $this->port = $this->getPort($this->host);
+        $this->ssl = $data["ssl"];
+        $this->queryString = $this->getQueryString($this->uri);
+
+        $this->headers = (object) $data["headers"];
     }
 }

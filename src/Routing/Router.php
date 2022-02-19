@@ -4,6 +4,7 @@
 namespace OSN\Framework\Routing;
 
 use App\Http\Config;
+use Closure;
 use OSN\Framework\Core\App;
 use OSN\Framework\Core\Controller;
 use OSN\Framework\Exceptions\FileNotFoundException;
@@ -51,6 +52,39 @@ class Router
     }
 
     /**
+     * @param string $givenPath
+     * @param string $givenMethod
+     * @return false|Route
+     */
+    public function findRoute(string $givenPath, string $givenMethod = ''): Route|bool
+    {
+        foreach ($this->routes as $route) {
+            if ($route->path() === $givenPath || $route->matches($givenPath)) {
+                if ($givenMethod === '') {
+                    return $route;
+                }
+                else {
+                    if ($route->method() == $givenMethod)
+                        return $route;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function findByLogic(Closure $closure): Route|bool
+    {
+        foreach ($this->routes as $route) {
+            if (call_user_func_array($closure, [$route]) === true) {
+                return $route;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @throws HTTPException|FileNotFoundException
      */
     public function resolve()
@@ -85,7 +119,7 @@ class Router
             $callback[1] = $callback[1] ?? 'index';
             $globals = [];
 
-            $globalMiddlewares = Config::$globalMiddlewares;
+            $globalMiddlewares = config('http')['global_middleware'] ?? [];
 
             foreach ($globalMiddlewares as $globalMiddleware) {
                 $globals[] = new $globalMiddleware();

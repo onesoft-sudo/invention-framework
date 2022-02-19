@@ -43,4 +43,12 @@ trait CreatesApplication
         $this->app->db->pdo = null;
         unlink($this->dbpath);
     }
+
+    protected function updateRequest()
+    {
+        $this->app->request->update();
+        $this->app->request->uri = $this->route ?? $this->app->request->uri;
+        $this->app->request->baseURI = $this->route ?? $this->app->request->baseURI;
+        $this->app->request->method = $this->method ?? $this->app->request->method;
+    }
 }
