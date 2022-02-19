@@ -4,12 +4,12 @@
 # Invention Framework
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/php.yml/badge.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework/badge)](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework)
+![Progress](https://progress-bar.dev/75?title=Development)
 
 The next level PHP framework.
 
-**Important: It is not recommended to use this framework in production until a stable version gets released.**
+**Important: It is not recommended using this framework in production until a stable version gets released.**
 
-![Progress](https://progress-bar.dev/75?title=Development)
 
 
 ### Creating an Invention-Based Project
