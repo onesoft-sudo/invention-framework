@@ -139,7 +139,7 @@ abstract class Model implements JsonSerializable
      * @param $primaryValue
      * @return self|null
      */
-    public static function find($primaryValue): ?self
+    public static function find($primaryValue): ?static
     {
         $model = new static();
 

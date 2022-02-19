@@ -4,6 +4,7 @@
 namespace OSN\Framework\ORM;
 
 
+use App\Http\Controllers\APIController;
 use OSN\Framework\Core\Model;
 use OSN\Framework\ORM\Relationships\BelongsTo;
 use OSN\Framework\ORM\Relationships\BelongsToMany;
@@ -11,6 +12,7 @@ use OSN\Framework\ORM\Relationships\HasMany;
 use OSN\Framework\ORM\Relationships\HasManyThrough;
 use OSN\Framework\ORM\Relationships\HasOne;
 use OSN\Framework\ORM\Relationships\HasOneThrough;
+use OSN\Framework\ORM\Relationships\Polymorphic\MorphMany;
 use OSN\Framework\ORM\Relationships\Polymorphic\MorphOne;
 use OSN\Framework\ORM\Relationships\Polymorphic\MorphTo;
 
@@ -64,8 +66,9 @@ trait ORMBaseTrait
         return new MorphTo($this, $keyword);
     }
 
-    public function morphMany(string $class, string $keyword = '')
+    public function morphMany(string $class, string $keyword = ''): MorphMany
     {
         /** @var Model $this */
+        return new MorphMany($this, new $class(), $keyword);
     }
 }
