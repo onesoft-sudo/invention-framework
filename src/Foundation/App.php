@@ -36,7 +36,7 @@ abstract class App extends Container
 
         $this->env = $_ENV;
         self::$app = $this;
-        $this->config = new Config($rootpath . '/' . ($this->env['CONF_FILE'] ?? 'config/app.php'));
+        $this->config = new Config($rootpath . '/' . $this->env['CONF_FILE']);
         $this->config->root_dir = $rootpath;
         self::$app = $this;
         $this->loadInitializers();
