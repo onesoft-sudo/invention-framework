@@ -4,7 +4,7 @@
 namespace OSN\Framework\Console;
 
 
-class Generator
+class Generator2
 {
     public function generate($path, $template, $call1, $call2, ...$args)
     {

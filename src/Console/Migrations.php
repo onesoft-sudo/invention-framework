@@ -7,7 +7,7 @@ use OSN\Framework\Core\Database;
 use OSN\Framework\Core\Migration;
 use PDO;
 
-class Migrations
+class Migrations2
 {
     protected string $path;
     protected array $migrations = [];

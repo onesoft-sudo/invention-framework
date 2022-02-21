@@ -3,8 +3,6 @@
 
 namespace OSN\Framework\Cache;
 
-use OSN\Framework\Utils\Arrayable;
-
 class Cache
 {
     protected string $cachedir;
@@ -17,13 +15,23 @@ class Cache
     public function __construct(string $cachedir)
     {
         $this->cachedir = $cachedir . '/app';
+
+        if (!is_dir($this->cachedir))
+            $this->mkdir('', 0755, true);
+
+        if (!is_dir($this->files()))
+            $this->mkdir($this->files(), 0755, true);
+
+        if (!is_dir($this->raw()))
+            $this->mkdir($this->raw(), 0755, true);
+
         $this->caches = json_decode(file_get_contents($this->cachedir . '/cacheconfig.json'));
         $this->purge();
     }
 
-    protected function mkdir(string $dir, int $mode = 0755): bool
+    protected function mkdir(string $dir, int $mode = 0755, bool $recursive = false): bool
     {
-        return mkdir($this->cachedir . "/" . $dir, $mode);
+        return mkdir($this->cachedir . "/" . $dir, $mode, $recursive);
     }
 
     public function files(): string
@@ -142,6 +150,30 @@ class Cache
             $this->caches->$id->expires_at = now();
 
         $this->purge();
+    }
+
+    public function removeAll()
+    {
+        foreach ($this->caches as $key => $cache) {
+            $this->caches->$key->expires_at = now();
+        }
+
+        $this->purge();
+    }
+
+    public function removeInternals(): void
+    {
+        $ignore = ['.', '..', '.gitignore'];
+
+        foreach ([basepath('/var/cache/powerparser')] as $path) {
+            $files = scandir($path);
+
+            foreach ($files as $file) {
+                if (!in_array($file, $ignore)) {
+                    unlink($path . '/' . $file);
+                }
+            }
+        }
     }
 
     public function getFile($id): string
