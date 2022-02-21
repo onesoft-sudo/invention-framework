@@ -16,13 +16,13 @@ class Cache
     {
         $this->cachedir = $cachedir . '/app';
 
-        if (!is_dir($this->cachedir))
+        if (!file_exists($this->cachedir))
             $this->mkdir('', 0755, true);
 
-        if (!is_dir($this->files()))
+        if (!file_exists($this->files()))
             $this->mkdir($this->files(), 0755, true);
 
-        if (!is_dir($this->raw()))
+        if (!file_exists($this->raw()))
             $this->mkdir($this->raw(), 0755, true);
 
         $this->caches = json_decode(file_get_contents($this->cachedir . '/cacheconfig.json'));
