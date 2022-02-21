@@ -17,7 +17,6 @@ use Symfony\Component\Console\Application;
 class App extends \OSN\Framework\Foundation\App
 {
     public Arguments $argument;
-    public Generator $generator;
     public Commander $commander;
 
     public array $argv;
@@ -33,7 +32,6 @@ class App extends \OSN\Framework\Foundation\App
         $this->argv = $argv;
         $this->db = new Database($this->env);
         $this->argument = new Arguments();
-        $this->generator = new Generator();
         $this->commander = new Commander($this->argument);
         $this->symfonyApp = new Application();
     }
