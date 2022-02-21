@@ -19,8 +19,6 @@ class Cache
         if (!file_exists($this->cachedir))
             $this->mkdir('', 0755, true);
 
-        dd($this->files());
-
         if (!file_exists($this->files()))
             $this->mkdir($this->files(), 0755, true);
 
