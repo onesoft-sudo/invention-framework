@@ -38,12 +38,12 @@ class Cache
 
     public function files(): string
     {
-        return realpath($this->cachedir . '/files');
+        return ($this->cachedir . '/files');
     }
 
     public function raw(): string
     {
-        return realpath($this->cachedir . '/raw');
+        return ($this->cachedir . '/raw');
     }
 
     protected function addFile($file): string
