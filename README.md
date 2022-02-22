@@ -29,7 +29,7 @@ composer require osn/invention-framework:dev-main
 ### Next Steps
 After the installation, you should edit the `.env` file and adjust your app's settings.
 
-## Contributing
+### Contributing
 Refer [here](CONTRIBUTING.md).
 
 ### Support
