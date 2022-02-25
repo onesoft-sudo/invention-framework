@@ -1,8 +1,8 @@
 <?php
 
 use Carbon\Carbon;
+use OSN\Framework\Contracts\Event;
 use OSN\Framework\Core\Model;
-use OSN\Framework\Events\EventInterface;
 use OSN\Framework\Exceptions\EventException;
 use OSN\Framework\Routing\Route;
 use OSN\Framework\Utils\Arrayable;
@@ -407,8 +407,8 @@ if (!function_exists('fire')) {
         if (is_string($event))
             $event = new $event($data);
 
-        if (!$event instanceof EventInterface) {
-            throw new EventException("Event " . get_class($event) . " does not implement " . EventInterface::class);
+        if (!$event instanceof Event) {
+            throw new EventException("Event " . get_class($event) . " does not implement " . Event::class);
         }
 
         if ($handler !== null)
@@ -425,6 +425,13 @@ if (!function_exists('to_array')) {
     function to_array(Arrayable $arrayable): array
     {
         return $arrayable->toArray();
+    }
+}
+
+if (!function_exists('elapsed_time')) {
+    function elapsed_time()
+    {
+        return microtime(true) - APP_START;
     }
 }
 
