@@ -4,6 +4,7 @@
 namespace OSN\Framework\RateLimiting;
 
 
+use JetBrains\PhpStorm\Pure;
 use OSN\Framework\Core\Middleware;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
@@ -34,9 +35,8 @@ class RateLimiter extends Middleware
         file_put_contents(basepath($this->confDB), json_encode($this->data, JSON_PRETTY_PRINT));
     }
 
-    public function handle(Request $request)
+    protected function findClientByIP(string $ip)
     {
-        $ip = $request->ip;
         $client = null;
 
         foreach ($this->data as $ip1 => &$datum) {
@@ -46,12 +46,40 @@ class RateLimiter extends Middleware
             }
         }
 
+        return $client;
+    }
+
+    #[Pure]
+    protected function getClientByIP(string $ip)
+    {
+        $client = $this->findClientByIP($ip);
+
         if ($client === null) {
             $client = (object) [
-                "request_count" => 0,
+                "request_count" => 1,
                 "last_request_time" => date(DATE_ATOM)
             ];
         }
+
+        return $client;
+    }
+
+    protected function resetClientData(string $ip, object $client)
+    {
+        if ((strtotime($client->last_request_time) + $this->sec) <= time()) {
+            unset($this->data->$ip);
+        }
+        else {
+            $client->last_request_time = date(DATE_ATOM);
+        }
+
+        $this->updateData();
+    }
+
+    public function handle(Request $request)
+    {
+        $ip = $request->ip;
+        $client = $this->getClientByIP($ip);
 
         $client->request_count++;
         $this->data->$ip = $client;
@@ -62,11 +90,6 @@ class RateLimiter extends Middleware
             ]);
         }
 
-        if ((strtotime($client->last_request_time) + $this->sec) <= time()) {
-            $client->request_count = 1;
-        }
-
-        $client->last_request_time = date(DATE_ATOM);
-        $this->updateData();
+        $this->resetClientData($ip, $client);
     }
 }
