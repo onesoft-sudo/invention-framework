@@ -12,22 +12,11 @@ trait CreatesApplication
 
     public function createApp()
     {
-//        App::$app = new class() extends App {
-//            public \OSN\Framework\Routing\Router $router;
-//            public \OSN\Framework\Http\Request $request;
-//            public \OSN\Framework\Http\Response $response;
-//
-//            public function __construct()
-//            {
-//                $this->request = new Request();
-//                $this->response = new Response();
-//                $this->router = new Router($this->request, $this->response);
-//            }
-//        };
-
         $this->root = __DIR__ . '/../TestApplication';
         $this->dbpath = $this->root . '/var/tmp/database.db';
         file_put_contents($this->dbpath, '');
+
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
         $this->app = new App($this->root, [
             'APP_ENV' => 'dev',
