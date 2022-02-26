@@ -122,6 +122,11 @@ class Router
             $globalMiddlewares = config('http')['global_middleware'] ?? [];
 
             foreach ($globalMiddlewares as $globalMiddleware) {
+                if (is_object($globalMiddleware)) {
+                    $globals[] = $globalMiddleware;
+                    continue;
+                }
+
                 $globals[] = new $globalMiddleware();
             }
 

@@ -43,7 +43,7 @@ abstract class Controller
     {
         if (is_string($middlewares[0])) {
             foreach ($middlewares as $key => $middleware) {
-                $middlewares[$key] = new $middleware();
+                $middlewares[$key] = is_string($middleware) ? new $middleware() : $middleware;
             }
         }
 

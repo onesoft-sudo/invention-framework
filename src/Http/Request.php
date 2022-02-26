@@ -21,6 +21,7 @@ class Request
     public string $port;
     public bool $ssl;
     public string $queryString;
+    public string $ip;
 
     public object $post;
     public object $get;
@@ -175,6 +176,7 @@ class Request
                 "protocol" => $_SERVER['SERVER_PROTOCOL'] ?? '',
                 "host" => $_SERVER["HTTP_HOST"] ?? '',
                 "ssl" => isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === 'on',
+                "ip" => $_SERVER['REMOTE_ADDR'],
                 "headers" => headers()
             ];
         }
@@ -201,6 +203,7 @@ class Request
         $this->port = $this->getPort($this->host);
         $this->ssl = $data["ssl"];
         $this->queryString = $this->getQueryString($this->uri);
+        $this->ip = $data["ip"];
 
         $this->headers = (object) $data["headers"];
     }

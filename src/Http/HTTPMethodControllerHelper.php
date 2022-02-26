@@ -3,6 +3,13 @@
 
 namespace OSN\Framework\Http;
 
+/**
+ * Trait HTTPMethodControllerHelper
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @todo Update route params
+ */
 trait HTTPMethodControllerHelper
 {
     protected array $apiHandlers = [

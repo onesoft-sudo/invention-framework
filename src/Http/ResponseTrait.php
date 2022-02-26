@@ -8,7 +8,7 @@ trait ResponseTrait
 {
     protected ?string $response;
     protected $code;
-    protected ?array $headers = [];
+    public ?array $headers = [];
     protected string $statusText;
 
     protected static array $responseCodes = [
@@ -134,10 +134,6 @@ trait ResponseTrait
     {
         $headers = headers_list();
 
-        if (!empty($custom_headers)) {
-            $headers = array_merge($headers, $custom_headers);
-        }
-
         $headers_array = $this->headers;
 
         foreach ($headers as $header) {
@@ -147,11 +143,17 @@ trait ResponseTrait
             $headers_array[$key] = trim(implode(':', $tmp));
         }
 
+        $headers_array = array_merge($headers_array, $custom_headers);
+
         $this->headers = $headers_array;
     }
 
-    public function header($key, $value)
+    public function header($key, $value = null)
     {
+        if ($value === null) {
+            return $this->headers[$key] ?? null;
+        }
+
         $this->headers[$key] = $value;
     }
 }
