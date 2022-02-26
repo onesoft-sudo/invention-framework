@@ -4,7 +4,6 @@
 namespace OSN\Framework\RateLimiting;
 
 
-use JetBrains\PhpStorm\Pure;
 use OSN\Framework\Core\Middleware;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
@@ -49,7 +48,7 @@ class RateLimiter extends Middleware
         return $client;
     }
 
-    #[Pure]
+    #[\Pure]
     protected function getClientByIP(string $ip)
     {
         $client = $this->findClientByIP($ip);
