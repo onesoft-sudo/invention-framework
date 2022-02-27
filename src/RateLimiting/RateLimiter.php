@@ -21,7 +21,6 @@ class RateLimiter extends Middleware
         $this->limit = $limit;
         $this->sec = $sec;
         $this->data = $this->loadData();
-        date_default_timezone_set('Asia/Dhaka');
     }
 
     protected function loadData()
