@@ -20,11 +20,16 @@ trait CreatesApplication
 
         $this->app = new App($this->root, [
             'APP_ENV' => 'dev',
-            'CONF_FILE' => 'config/main.php',
+            'CONF_FILE' => '/config/main.php',
+            'LOG_FILE' => '/var/log/app.log',
             'SERVER_PORT' => '80',
             'DB_VENDOR' => 'sqlite',
             'DB_NAME' => realpath($this->dbpath)
         ]);
+
+        if (!is_file(env('LOG_FILE'))) {
+            file_put_contents(env('LOG_FILE'), '');
+        }
     }
 
     public function destroyApp()
