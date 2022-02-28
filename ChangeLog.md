@@ -1,5 +1,8 @@
 # ChangeLog
  
+### v0.7.0-dev
+- Added `OSN\Framework\Logger` class (virtual-designer #5)
+
 ### 2022-01-24
 - Added `Callable` interface
  
