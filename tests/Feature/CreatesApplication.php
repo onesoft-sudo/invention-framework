@@ -27,8 +27,8 @@ trait CreatesApplication
             'DB_NAME' => realpath($this->dbpath)
         ]);
 
-        if (!is_file(env('LOG_FILE'))) {
-            file_put_contents(env('LOG_FILE'), '');
+        if (!is_file(basepath(env('LOG_FILE')))) {
+            file_put_contents(basepath(env('LOG_FILE')), '');
         }
     }
 
