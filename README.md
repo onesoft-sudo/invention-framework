@@ -1,5 +1,5 @@
 ![Invention Framework](https://repository-images.githubusercontent.com/438729131/0c5749e4-96da-4f48-b2d0-0d931478b79c)
- 
+
  
 # Invention Framework
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/php.yml/badge.svg)
