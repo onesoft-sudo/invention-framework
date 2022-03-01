@@ -2,7 +2,7 @@
  
 # Invention Framework
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/php.yml/badge.svg)
-![Downloads](![Packagist Downloads](https://img.shields.io/packagist/dd/osn/invention-framework?label=Downloads))
+![Packagist Downloads](https://img.shields.io/packagist/dd/osn/invention-framework?label=Downloads)
 [![CodeFactor](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework/badge)](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework)
 ![Progress](https://progress-bar.dev/80?title=Development)
 
