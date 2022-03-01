@@ -5,6 +5,7 @@ namespace OSN\Framework\Foundation;
 
 
 use Dotenv\Dotenv;
+use OSN\Envoy\Envoy;
 use OSN\Framework\Cache\Cache;
 use OSN\Framework\Container\Container;
 use OSN\Framework\Core\Config;
@@ -30,14 +31,13 @@ abstract class App extends Container
             $_ENV = $env;
         }
         else {
-
+            (new Envoy($rootpath . '/.env'))->load();
         }
 
         $this->env = $_ENV;
         self::$app = $this;
         $this->config = new Config($rootpath . $this->env['CONF_FILE']);
         $this->config->root_dir = $rootpath;
-        self::$app = $this;
         $this->loadInitializers();
         $this->preinit();
 
@@ -58,7 +58,6 @@ abstract class App extends Container
 
         $this->loadBindingsFromConfig();
         $this->boot();
-        self::$app = $this;
         $this->init();
     }
 
