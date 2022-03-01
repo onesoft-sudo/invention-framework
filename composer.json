@@ -13,13 +13,13 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "php": ">=8.0",
-        "vlucas/phpdotenv": "^5.4",
         "fakerphp/faker": "^1.18",
         "symfony/var-dumper": "^5.4",
         "monolog/monolog": "^2.3",
         "symfony/console": "^5.4",
         "nesbot/carbon": "^2.56",
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+        "osn/envoy": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3"

@@ -30,8 +30,7 @@ abstract class App extends Container
             $_ENV = $env;
         }
         else {
-            $dotenv = Dotenv::createImmutable($rootpath);
-            $dotenv->load();
+
         }
 
         $this->env = $_ENV;
