@@ -4,7 +4,6 @@
 namespace OSN\Framework\Foundation;
 
 
-use Dotenv\Dotenv;
 use OSN\Envoy\Envoy;
 use OSN\Framework\Cache\Cache;
 use OSN\Framework\Container\Container;
