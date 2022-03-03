@@ -3,14 +3,11 @@
 
 namespace OSN\Framework\Routing;
 
-use App\Http\Config;
 use Closure;
 use OSN\Framework\Core\App;
 use OSN\Framework\Core\Controller;
 use OSN\Framework\Exceptions\FileNotFoundException;
 use OSN\Framework\Exceptions\HTTPException;
-use OSN\Framework\Http\HTTPMethodControllerHelper;
-use OSN\Framework\Http\HTTPMethodRouterHelper;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
 use OSN\Framework\Facades\Response as ResponseFacade;
@@ -19,13 +16,8 @@ use stdClass;
 
 class Router
 {
-    use HTTPMethodRouterHelper;
-    use HTTPMethodControllerHelper;
-
-    /**
-     * @var Route[] $routes
-     */
-    protected array $routes = [];
+    use HTTPRouteRegistrationTrait;
+    use HTTPRouteControllerAssignerTrait;
 
     public Request $request;
     public Response $response;
@@ -82,6 +74,42 @@ class Router
         }
 
         return false;
+    }
+
+    public function autoRegister(array $actions)
+    {
+        foreach ($actions as $action) {
+            if (is_string($action)) {
+                $reflectionRoute = new \ReflectionClass($action);
+                $methods = $reflectionRoute->getMethods();
+
+                foreach ($methods as $method) {
+                    $attrs = $method->getAttributes(\OSN\Framework\Attributes\Route::class,\ReflectionAttribute::IS_INSTANCEOF);
+
+                    foreach ($attrs as $attr) {
+                        $attr = $attr->newInstance();
+                        $r = $this->addRoute($attr->method, $attr->route, [$action, $method->getName()]);
+
+                        if ($attr->name !== '') {
+                            $r->name($attr->name);
+                        }
+                    }
+                }
+            }
+            elseif ($action instanceof Closure) {
+                $function = new \ReflectionFunction($action);
+                $attrs = $function->getAttributes(\OSN\Framework\Attributes\Route::class,\ReflectionAttribute::IS_INSTANCEOF);
+
+                foreach ($attrs as $attr) {
+                    $attr = $attr->newInstance();
+                    $r = $this->addRoute($attr->method, $attr->route, $action);
+
+                    if ($attr->name !== '') {
+                        $r->name($attr->name);
+                    }
+                }
+            }
+        }
     }
 
     /**

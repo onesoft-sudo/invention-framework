@@ -1,7 +1,7 @@
 <?php
 
 
-namespace OSN\Framework\Http;
+namespace OSN\Framework\Routing;
 
 /**
  * Trait HTTPMethodControllerHelper
@@ -10,7 +10,7 @@ namespace OSN\Framework\Http;
  * @author Ar Rakin <rakinar2@gmail.com>
  * @todo Update route params
  */
-trait HTTPMethodControllerHelper
+trait HTTPRouteControllerAssignerTrait
 {
     protected array $apiHandlers = [
         "get" => ["index", "view"],
