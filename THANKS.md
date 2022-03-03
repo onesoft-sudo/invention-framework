@@ -4,13 +4,10 @@ This file contains a list of the contributors of this project. We always try to 
 You can also see the list of contributors at [GitHub](https://github.com/onesoft-sudo/invention-framework/graphs/contributors).
 If anything is incorrect here, then please report it to us or contact us.
 
-### A
-- [Ar Rakin](https://virtual-designer.github.io)
-
 ### E
-- Electra
+- Electra <electra@onesoftnet.ml>
 
 ### S
-- [smalldev2](https://github.com/smalldev2)
+- smalldev2 <smalldev2@onesoftnet.ml>
 
 Thanks to all of the contributors.
