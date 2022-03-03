@@ -1,14 +1,18 @@
 <?php
 
 
-namespace OSN\Framework\Http;
+namespace OSN\Framework\Routing;
 
 
 use Closure;
-use OSN\Framework\Routing\Route;
 
-trait HTTPMethodRouterHelper
+trait HTTPRouteRegistrationTrait
 {
+    /**
+     * @var Route[] $routes
+     */
+    protected array $routes = [];
+
     public function addRoute(string $method, string $route, $callback): Route
     {
         $routeObject = new Route($method, $route, $callback);
