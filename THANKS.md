@@ -6,3 +6,4 @@ Thanks to all the contributors.
 
 - Electra <electra@onesoftnet.ml>
 - smalldev2 <smalldev2@onesoftnet.ml>
+- Stéphane Chazelas
