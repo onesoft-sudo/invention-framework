@@ -32,6 +32,7 @@ jobs:
             if(trim(\$line) == '' || trim(\$line)[0] == '#'){continue;}
             elseif(trim(\$line)[0] == '-'){
               if(!preg_match('/^( *)-( *)(.+)( *)\(([^)]+)\)$/', \$line)){
+                echo 'ChangeLog.md file is not formatted correctly, please fix it.';
                 exit(1);
               }
             }
