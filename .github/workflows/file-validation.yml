@@ -61,7 +61,7 @@ jobs:
             foreach(\$file as \$line){
               if(trim(\$line) == '' || trim(\$line)[0] == '#'){continue;}
               elseif(trim(\$line)[0] == '-'){
-                if(!preg_match('/^( *)-( *)([^\<\>]+) (\<([^\@]+)\@([^\@]+)\>)?$/', \$line)){
+                if(!preg_match('/^( *)-( *)([^\<\>]+)( \<([^\@]+)\@([^\@]+)\>)?$/', \$line)){
                   echo 'THANKS.md file is not formatted correctly, please fix it.' . \"\n\";
                   exit(1);
                 }
