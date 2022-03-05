@@ -4,35 +4,35 @@
 - Added `OSN\Framework\Logger` class (virtual-designer #5)
 
 ### 2022-01-24
-- Added `Callable` interface
+- Added `Callable` interface (smalldev2)
  
 ### 2022-01-15
-- Fixed `BelongsToMany` Relationship
-- Added `TestCase` class
-- Added Initializers
-- Added config support
-- Minor updates and fixes
+- Fixed `BelongsToMany` Relationship (virtual-designer)
+- Added `TestCase` class (virtual-designer)
+- Added Initializers (virtual-designer)
+- Added config support (virtual-designer)
+- Minor updates and fixes (virtual-designer)
 
 ### 2022-01-08
-- Added ORM and some relationship classes
-- Improved PowerParser to work with `:if`, `:for` and other statements like Laravel Blade
-- Fixed minor bugs
+- Added ORM and some relationship classes (virtual-designer)
+- Improved PowerParser to work with `:if`, `:for` and other statements like Laravel Blade (virtual-designer)
+- Fixed minor bugs (virtual-designer)
 
 ### 2021-12-24
-- Added the `OSN\Framework\DataTypes\_String` and its facade class
-- Fixed the `OSN\Framework\Http\Request` class bugs
-- Fixed the `OSN\Framework\Core\App` class to work with this version
+- Added the `OSN\Framework\DataTypes\_String` and its facade class (virtual-designer)
+- Fixed the `OSN\Framework\Http\Request` class bugs (virtual-designer)
+- Fixed the `OSN\Framework\Core\App` class to work with this version (virtual-designer)
 
 ### 2021-12-23
-- Added custom request classes
-- Added factories
-- Added command-line support
-- Added custom command-line scripts
+- Added custom request classes (virtual-designer)
+- Added factories (virtual-designer)
+- Added command-line support (virtual-designer)
+- Added custom command-line scripts (virtual-designer)
 
 ### 2021-12-17
-- Added injectors support
-- Added PowerParser support
+- Added injectors support (virtual-designer)
+- Added PowerParser support (virtual-designer)
 
 ### 2021-12-16
-- Added MVC core features
-- Initialized the project
+- Added MVC core features (virtual-designer)
+- Initialized the project (virtual-designer)
