@@ -25,4 +25,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Validate ChangeLog.md
-        run: cd $GITHUB_WORKSPACE && php -r "$file = file('ChangeLog.md'); echo $file;"
+        run: cd $GITHUB_WORKSPACE && php -r "\$file = file('ChangeLog.md'); echo \$file;"
