@@ -23,7 +23,7 @@ jobs:
         with:
             php-version: 8.0
 
-      # Runs a single command using the runners shell
+      # Validates ChangeLog.md file
       - name: Validate ChangeLog.md
         run: |
           cd $GITHUB_WORKSPACE &&
@@ -37,3 +37,33 @@ jobs:
               }
             }
           }"
+
+      # Validates AUTHORS.md file
+      - name: Validate AUTHORS.md
+        run: |
+          cd $GITHUB_WORKSPACE &&
+          php -r "\$file = file('AUTHORS.md');
+          foreach(\$file as \$line){
+            if(trim(\$line) == '' || trim(\$line)[0] == '#'){continue;}
+            elseif(trim(\$line)[0] == '-'){
+              if(!preg_match('/^( *)-( *)([^\<\>]+) (\<([^\@]+)\@([^\@]+)\>)$/', \$line)){
+                echo 'AUTHORS.md file is not formatted correctly, please fix it.' . \"\n\";
+                exit(1);
+              }
+            }
+          }"
+
+        # Validates THANKS.md file
+      - name: Validate THANKS.md
+        run: |
+            cd $GITHUB_WORKSPACE &&
+            php -r "\$file = file('THANKS.md');
+            foreach(\$file as \$line){
+              if(trim(\$line) == '' || trim(\$line)[0] == '#'){continue;}
+              elseif(trim(\$line)[0] == '-'){
+                if(!preg_match('/^( *)-( *)([^\<\>]+) (\<([^\@]+)\@([^\@]+)\>)?$/', \$line)){
+                  echo 'THANKS.md file is not formatted correctly, please fix it.' . \"\n\";
+                  exit(1);
+                }
+              }
+            }"
