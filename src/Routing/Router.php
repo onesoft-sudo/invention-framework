@@ -76,7 +76,7 @@ class Router
         return false;
     }
 
-    public function autoRegister(array $actions)
+    public function autoRegister(array $actions): void
     {
         foreach ($actions as $action) {
             if (is_string($action)) {
@@ -110,6 +110,21 @@ class Router
                 }
             }
         }
+    }
+
+    public function registerAllControllers(): void
+    {
+        $controllers = scandir(basepath('/app/Http/Controllers'));
+        $actions = [];
+
+        foreach ($controllers as $controller) {
+            if ($controller === '.' || $controller === '..')
+                continue;
+
+            $actions[] = "\\App\\Http\\Controllers\\" . pathinfo($controller, PATHINFO_FILENAME);
+        }
+
+        $this->autoRegister($actions);
     }
 
     /**
