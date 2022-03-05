@@ -25,4 +25,14 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Validate ChangeLog.md
-        run: cd $GITHUB_WORKSPACE && php -r "\$file = file('ChangeLog.md'); foreach(\$file as \$line){if(trim(\$line)[0] == '#' || trim(\$line) == ''){continue;}elseif(trim(\$line)[0] == '-'){if(!preg_match('/^( *)-( *)(.+)( *)\(([^)]+)\)$/', \$line)){exit(1);}}}"
+        run: |
+          cd $GITHUB_WORKSPACE &&
+          php -r "\$file = file('ChangeLog.md');
+          foreach(\$file as \$line){
+            if(trim(\$line) == '' || trim(\$line)[0] == '#'){continue;}
+            elseif(trim(\$line)[0] == '-'){
+              if(!preg_match('/^( *)-( *)(.+)( *)\(([^)]+)\)$/', \$line)){
+                exit(1);
+              }
+            }
+          }"
