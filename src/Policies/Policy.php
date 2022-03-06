@@ -20,5 +20,5 @@ namespace OSN\Framework\Policies;
 
 class Policy
 {
-    // TODO
+
 }
