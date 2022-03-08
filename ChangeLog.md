@@ -1,7 +1,7 @@
 # ChangeLog
 
 ### main (Under development)
-+ Added route-model binding support 
+- Added route-model binding support [issue #2] (virtual-designer)
 
 ### v0.7.0-dev
 - Added `OSN\Framework\Logger` class (virtual-designer #5)
