@@ -18,8 +18,10 @@
 namespace OSN\Framework\Routing;
 
 use Closure;
+use http\Exception\RuntimeException;
 use OSN\Framework\Core\App;
 use OSN\Framework\Core\Controller;
+use OSN\Framework\Core\Model;
 use OSN\Framework\Exceptions\FileNotFoundException;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
@@ -38,6 +40,7 @@ class Router
 
     /**
      * Router constructor.
+     *
      * @param Request $request
      * @param Response $response
      */
@@ -206,35 +209,23 @@ class Router
             }
 
             $params = app()->prepareFunctionCallParams(...$callback);
+            $routeParams = $route->params();
 
-            /*
-            if (isset($params[0])) {
-                $request = new $params[0]();
-
-                if ($request instanceof Request) {
-                    if (!$request->authorize()) {
-                        throw new HTTPException(403, "Forbidden");
+            foreach ($params as $i => &$param) {
+                if ($param instanceof Model) {
+                    if (!isset($routeParams[0])) {
+                        throw new \RuntimeException("Cannot resolve model: Invalid route-model binding");
                     }
 
-                    if ($request->autoValidate && !$request->validate()) {
-                        if (method_exists($request, 'handleInvalid')) {
-                            $request->handleInvalid();
-                        }
-                        else {
-                            if ($this->request->header('Referer')) {
-                                $this->response->setCode(406);
-                                $this->response->redirect($this->request->header('Referer'));
-                                return '';
-                            }
-                            else {
-                                throw new HTTPException(406);
-                            }
-                        }
+                    $param = get_class($param)::find($routeParams[$i]);
+
+                    if (!$param) {
+                        throw new HTTPException(404, "Not Found");
                     }
                 }
-            }*/
+            }
 
-            $params = array_merge($params, $route->params());
+            $params = array_merge($params, $routeParams);
         }
 
         //$output = call_user_func_array($callback, [$request ?? App::request()]);
