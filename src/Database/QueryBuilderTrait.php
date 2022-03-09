@@ -304,11 +304,6 @@ trait QueryBuilderTrait
         return $this->addQuery("UNION $query");
     }
 
-    public function concat(string $string)
-    {
-        return $this->addQuery("$string");
-    }
-
     public function join(string $table, string $currentTableColumn, string $joinTableColumn)
     {
         return $this->addQuery("JOIN $table ON {$this->currentTable}.$currentTableColumn = $table.$joinTableColumn", true);

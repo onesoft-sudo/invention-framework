@@ -2,6 +2,7 @@
 
 ### main (Under development)
 - Added route-model binding support [issue #2] (virtual-designer)
+- Added a bunch of new methods in Query Builder (virtual-designer)
 
 ### v0.7.0-dev
 - Added `OSN\Framework\Logger` class (virtual-designer #5)
