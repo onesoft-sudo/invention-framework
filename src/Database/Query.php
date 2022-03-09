@@ -33,4 +33,14 @@ class Query
     {
         return $this->getQuery();
     }
+
+    public function raw(string $sql): bool|\PDOStatement
+    {
+        return $this->db->query($sql);
+    }
+
+    public function rawFetch(string $sql, int $flags = \PDO::FETCH_ASSOC): array
+    {
+        return $this->raw($sql)->fetchAll($flags);
+    }
 }

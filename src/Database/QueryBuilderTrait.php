@@ -127,7 +127,7 @@ trait QueryBuilderTrait
         return $this;
     }
 
-    public function select(string $table, $columns = []): self
+    public function select(string $table, $columns = [], bool $distinct = false): self
     {
         $this->setCurrentTable($table);
 
@@ -141,8 +141,13 @@ trait QueryBuilderTrait
         $queryPart = implode(',', $keys);
         $queryPart = $queryPart[-1] === ',' ? substr($queryPart, 0, strlen($queryPart) - 1) : $queryPart;
 
-        $this->setQuery("SELECT " . $queryPart . " FROM $table");
+        $this->setQuery("SELECT " . ($distinct ? 'DISTINCT ' : '') . $queryPart . " FROM $table");
         return $this;
+    }
+
+    public function selectDistinct(string $table, $columns = []): self
+    {
+        return $this->select($table, $columns, true);
     }
 
     public function delete(string $table): self
@@ -221,6 +226,24 @@ trait QueryBuilderTrait
         return $this->where($cond, $valueOrMode);
     }
 
+    public function whereLike($col, $value = null)
+    {
+        $this->values[] = $value;
+        return $this->addQuery("WHERE $col LIKE ?");
+    }
+
+    public function orWhereLike($col, $value = null)
+    {
+        $this->values[] = $value;
+        return $this->addQuery("OR $col LIKE ?");
+    }
+
+    public function andWhereLike($col, $value = null)
+    {
+        $this->values[] = $value;
+        return $this->addQuery("AND $col LIKE ?");
+    }
+
     public function orderBy($col, $desc = false)
     {
         $arr = $col;
@@ -253,6 +276,39 @@ trait QueryBuilderTrait
         return $this->addQuery("LIMIT $offset, $limit", true);
     }
 
+    public function groupBy(string $groupBy)
+    {
+        return $this->addQuery("GROUP BY $groupBy", true);
+    }
+
+    public function having(string $condition)
+    {
+        return $this->addQuery("HAVING $condition", true);
+    }
+
+    public function andHaving(string $condition)
+    {
+        return $this->addQuery("AND $condition");
+    }
+
+    public function orHaving(string $condition)
+    {
+        return $this->addQuery("OR $condition");
+    }
+
+    public function union(string|\Stringable|Query|Table $query)
+    {
+        if (is_object($query) && property_exists($query, 'values'))
+            $this->values = array_merge($this->values, $query->values);
+
+        return $this->addQuery("UNION $query");
+    }
+
+    public function concat(string $string)
+    {
+        return $this->addQuery("$string");
+    }
+
     public function join(string $table, string $currentTableColumn, string $joinTableColumn)
     {
         return $this->addQuery("JOIN $table ON {$this->currentTable}.$currentTableColumn = $table.$joinTableColumn", true);
@@ -262,6 +318,53 @@ trait QueryBuilderTrait
     {
         $this->addQuery("LEFT", true);
         return $this->join($table, $currentTableColumn, $joinTableColumn);
+    }
+
+    public function rightJoin(string $table, string $currentTableColumn, string $joinTableColumn)
+    {
+        $this->addQuery("RIGHT", true);
+        return $this->join($table, $currentTableColumn, $joinTableColumn);
+    }
+
+    public function innerJoin(string $table, string $currentTableColumn, string $joinTableColumn)
+    {
+        $this->addQuery("INNER", true);
+        return $this->join($table, $currentTableColumn, $joinTableColumn);
+    }
+
+    public function crossJoin(string $table, string $currentTableColumn, string $joinTableColumn)
+    {
+        $this->addQuery("CROSS", true);
+        return $this->join($table, $currentTableColumn, $joinTableColumn);
+    }
+
+    public function joinRaw(string $table, string $on)
+    {
+        return $this->addQuery("JOIN $table ON $on", true);
+    }
+
+    public function leftJoinRaw(string $table, string $on)
+    {
+        $this->addQuery("LEFT", true);
+        return $this->joinRaw($table, $on);
+    }
+
+    public function rightJoinRaw(string $table, string $on)
+    {
+        $this->addQuery("RIGHT", true);
+        return $this->joinRaw($table, $on);
+    }
+
+    public function innerJoinRaw(string $table, string $on)
+    {
+        $this->addQuery("INNER", true);
+        return $this->joinRaw($table, $on);
+    }
+
+    public function crossJoinRaw(string $table, string $on)
+    {
+        $this->addQuery("CROSS", true);
+        return $this->joinRaw($table, $on);
     }
 
     public function execute($valuesOrQuery = null, bool $prepare = false): bool
