@@ -60,6 +60,7 @@ class Database
         $this->dsn = $dsn;
         $this->dbname = $env["DB_NAME"];
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     }
 
     public function getVendor(): ?string

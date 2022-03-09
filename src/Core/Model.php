@@ -265,6 +265,17 @@ abstract class Model implements JsonSerializable
         return $this->patch()->execute();
     }
 
+    public static function query(string $sql = ''): bool|\PDOStatement|Query|Table
+    {
+        $instance = new static();
+
+        if ($sql !== '') {
+            return (new Query())->raw(str_replace('{table}', $instance->table, $sql));
+        }
+
+        return $instance->_table;
+    }
+
     public function __call($name, $args)
     {
         if ($name === 'insert') {
