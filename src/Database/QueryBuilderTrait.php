@@ -150,6 +150,11 @@ trait QueryBuilderTrait
         return $this->select($table, $columns, true);
     }
 
+    public function selectRaw(string $stmt): self
+    {
+        return $this->addQuery("SELECT $stmt FROM {$this->currentTable}");
+    }
+
     public function delete(string $table): self
     {
         $this->setCurrentTable($table);
@@ -187,14 +192,15 @@ trait QueryBuilderTrait
     /**
      * @param $cond
      * @param null $valueOrMode
+     * @param null $operator
      * @return Query|QueryBuilderTrait|null
-     * @todo
      */
-    public function where($cond, $valueOrMode = null)
+    public function where($cond, $valueOrMode = null, $operator = null)
     {
         if (is_string($cond) && $valueOrMode !== null) {
             $this->values[] = $valueOrMode;
-            return $this->whereCustom("$cond = ?", !preg_match('/WHERE/i', $this->query));
+            $operator = $operator ?? '=';
+            return $this->whereCustom("$cond $operator ?", !preg_match('/WHERE/i', $this->query));
         }
 
         if (is_array($cond)) {
@@ -229,19 +235,47 @@ trait QueryBuilderTrait
     public function whereLike($col, $value = null)
     {
         $this->values[] = $value;
-        return $this->addQuery("WHERE $col LIKE ?");
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col LIKE ?");
     }
 
-    public function orWhereLike($col, $value = null)
+    public function whereIn($col, array $value)
     {
-        $this->values[] = $value;
-        return $this->addQuery("OR $col LIKE ?");
+        $this->values = array_merge($this->values, $value);
+        $questionMarks = implode(', ', array_map(fn() => '?', $value));
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col IN($questionMarks)");
     }
 
-    public function andWhereLike($col, $value = null)
+    public function whereIsNull($col)
     {
-        $this->values[] = $value;
-        return $this->addQuery("AND $col LIKE ?");
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col IS NULL");
+    }
+
+    public function whereIsNotNull($col)
+    {
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col IS NOT NULL");
+    }
+
+    public function and()
+    {
+        return $this->addQuery('AND');
+    }
+
+    public function or()
+    {
+        return $this->addQuery('OR');
+    }
+
+    public function not()
+    {
+        return $this->addQuery('NOT');
+    }
+
+    public function whereBetween($col, $min, $max)
+    {
+        $this->values[] = $min;
+        $this->values[] = $max;
+
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col BETWEEN ? AND ?");
     }
 
     public function orderBy($col, $desc = false)
@@ -283,17 +317,7 @@ trait QueryBuilderTrait
 
     public function having(string $condition)
     {
-        return $this->addQuery("HAVING $condition", true);
-    }
-
-    public function andHaving(string $condition)
-    {
-        return $this->addQuery("AND $condition");
-    }
-
-    public function orHaving(string $condition)
-    {
-        return $this->addQuery("OR $condition");
+        return $this->addQuery((!preg_match('/HAVING/i', $this->query) ? "HAVING " : "") . "$condition", true);
     }
 
     public function union(string|\Stringable|Query|Table $query)
