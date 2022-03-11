@@ -1,6 +1,7 @@
 # ChangeLog
 
 ### main (Under development)
+- Added advanced validation support [issue #12] (virtual-designer)
 - Added route-model binding support [issue #2] (virtual-designer)
 - Added a bunch of new methods in Query Builder (virtual-designer)
 
