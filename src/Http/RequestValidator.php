@@ -21,6 +21,13 @@ namespace OSN\Framework\Http;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Exceptions\PropertyNotFoundException;
 
+/**
+ * Trait RequestValidator
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @deprecated Use \OSN\Validation\Validator instead.
+ */
 trait RequestValidator
 {
     public array $errors = [];
