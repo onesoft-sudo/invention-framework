@@ -18,18 +18,53 @@
 namespace OSN\Framework\Validation;
 
 
+use Closure;
+use OSN\Framework\Exceptions\ValidatorException;
 use OSN\Framework\Http\RequestValidator;
 
 class Validator
 {
-    use RequestValidator {
-        RequestValidator::validate as protected _validate;
+    use Rules;
+
+    public function __construct(array|object $data, protected array $rules)
+    {
+        $this->data = (array) $data;
     }
 
-    protected array $rules = [];
-
-    public function rules()
+    #[\Pure]
+    public static function make(array|object $data, array $rules): static
     {
-        return $this->rules;
+        return new static($data, $rules);
+    }
+
+    /**
+     * Validate the data according to the rules.
+     *
+     * @throws ValidatorException
+     * @return void
+     */
+    public function validate(): void
+    {
+        foreach ($this->rules as $field => $rules) {
+            foreach ($rules as $rule) {
+                $ruleExploded = explode(':', $rule);
+                $ruleArguments = $ruleExploded[1] ?? [];
+
+                if (!empty($ruleArguments)) {
+                    $ruleArguments = explode(',', $ruleArguments);
+                }
+
+                $ruleMethod = "rule" . ucfirst($ruleExploded[0]);
+
+                if (method_exists($this, $ruleMethod)) {
+                    if (!call_user_func_array([$this, $ruleMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments])) {
+                        throw new ValidatorException("Validation failed for field '{$field}' (rule '{$rule}', value '" . ($this->data[$field] ?? '') . "')", 1);
+                    }
+                }
+                else {
+                    throw new ValidatorException("Invalid validation rule: {$rule}", 2);
+                }
+            }
+        }
     }
 }
