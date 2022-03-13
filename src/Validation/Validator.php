@@ -21,6 +21,7 @@ namespace OSN\Framework\Validation;
 use Closure;
 use OSN\Framework\Exceptions\ValidatorException;
 use OSN\Framework\Http\RequestValidator;
+use OSN\Framework\Utils\Arrayable;
 
 class Validator
 {
@@ -28,10 +29,10 @@ class Validator
 
     public function __construct(array|object $data, protected array $rules)
     {
+        $data = $data instanceof Arrayable ? $data->toArray() : $data;
         $this->data = (array) $data;
     }
 
-    #[\Pure]
     public static function make(array|object $data, array $rules): static
     {
         return new static($data, $rules);

@@ -19,8 +19,9 @@ namespace OSN\Framework\Http;
 
 use OSN\Framework\Exceptions\PropertyNotFoundException;
 use OSN\Framework\Http\RequestValidator;
+use OSN\Framework\Utils\Arrayable;
 
-class Request
+class Request implements Arrayable
 {
     use HTTPRequestParser;
     use RequestValidator;
@@ -40,7 +41,7 @@ class Request
     public object $post;
     public object $get;
     protected ?array $old;
-    public array $uploadedFiles;
+    public array $files;
 
     public object $headers;
 
@@ -77,6 +78,11 @@ class Request
         return $this->post->$key ?? false;
     }
 
+    public function file(string $key)
+    {
+        return $this->files[$key] ?? false;
+    }
+
     public function isWriteRequest(): bool
     {
         if(in_array($this->method, ["POST", 'PUT', 'PATCH', "DELETE"])) {
@@ -98,8 +104,12 @@ class Request
             $prop = $this->post($name);
         }
 
+        if ($prop === false) {
+            $prop = $this->file($name);
+        }
+
         if ($prop === false && $this->errmode_exception)
-            throw new PropertyNotFoundException();
+            throw new PropertyNotFoundException("The given field was not found");
 
         return $prop;
     }
@@ -133,7 +143,7 @@ class Request
 
     public function except(array $except): array
     {
-        $arr = array_merge((array) $this->get, (array) $this->post);
+        $arr = array_merge((array) $this->get, (array) $this->post, $this->files);
 
         foreach ($except as $key) {
             if (isset($arr[$key]))
@@ -205,7 +215,7 @@ class Request
 
         $this->post = (object) $data["post"];
         $this->get = (object) $data["get"];
-        $this->uploadedFiles = $data["files"];
+        $this->files = array_map(fn($file) => new UploadedFile($file), $data["files"]);
 
         $this->realMethod = $data["method"];
         $this->method = $this->getMethod();
@@ -220,5 +230,15 @@ class Request
         $this->ip = $data["ip"];
 
         $this->headers = (object) $data["headers"];
+    }
+
+    /**
+     * Return the array representation of the current object.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->all();
     }
 }

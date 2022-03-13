@@ -17,6 +17,8 @@
 
 namespace OSN\Framework\Validation;
 
+use OSN\Framework\Http\UploadedFile;
+
 /**
  * Trait Rules
  *
@@ -124,5 +126,16 @@ trait Rules
     {
         $c = $confirmationField ?? ($field . '_confirmation');
         return $this->ruleRequired($this->data[$c] ?? '') && $this->data[$c] === $data;
+    }
+
+    /**
+     * Validate that the field value is an image file.
+     *
+     * @param $data
+     * @return bool
+     */
+    protected function ruleImage($data): bool
+    {
+        return $data instanceof UploadedFile && $data->isImage();
     }
 }
