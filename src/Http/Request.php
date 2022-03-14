@@ -18,13 +18,14 @@
 namespace OSN\Framework\Http;
 
 use OSN\Framework\Exceptions\PropertyNotFoundException;
+use OSN\Framework\Exceptions\ValidatorException;
 use OSN\Framework\Http\RequestValidator;
 use OSN\Framework\Utils\Arrayable;
+use OSN\Framework\Validation\Validator;
 
 class Request implements Arrayable
 {
     use HTTPRequestParser;
-    use RequestValidator;
 
     public string $method;
     public string $realMethod;
@@ -50,6 +51,10 @@ class Request implements Arrayable
      * @var bool
      */
     public bool $autoValidate = false;
+    /**
+     * @var false|mixed|Validator
+     */
+    protected Validator $validator;
 
     public function __construct(?array $data = null, bool $errmode_exception = true)
     {
@@ -215,7 +220,7 @@ class Request implements Arrayable
 
         $this->post = (object) $data["post"];
         $this->get = (object) $data["get"];
-        $this->files = array_map(fn($file) => new UploadedFile($file), $data["files"]);
+        $this->files = array_map(fn($file) => $file['error'] === UPLOAD_ERR_NO_FILE ? null : new UploadedFile($file), $data["files"]);
 
         $this->realMethod = $data["method"];
         $this->method = $this->getMethod();
@@ -240,5 +245,27 @@ class Request implements Arrayable
     public function toArray(): array
     {
         return $this->all();
+    }
+
+    public function validate(array $rules): bool
+    {
+        try {
+            $this->validator = Validator::make($this, $rules);
+            $this->validator->validate();
+            return true;
+        }
+        catch (ValidatorException $e) {
+            return false;
+        }
+    }
+
+    public function validated(): array
+    {
+        return $this->validator?->validated();
+    }
+
+    public function sanitized(): array
+    {
+        return $this->validator?->sanitized();
     }
 }

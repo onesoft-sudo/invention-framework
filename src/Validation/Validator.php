@@ -90,6 +90,8 @@ class Validator
 
     public function sanitize()
     {
+        $this->sanitized = $this->data;
+
         foreach ($this->rules as $field => $rules) {
             foreach ($rules as $rule) {
                 $ruleExploded = explode(':', $rule);
