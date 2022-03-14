@@ -66,6 +66,16 @@ trait TableQueryTrait
         return $this->query->select($this->getTableName(), $data);
     }
 
+    public function insertSelect(string $table, array $columns1 = [], array $columns2 = [], bool $distinct = false)
+    {
+        return $this->query->insertSelect($this->getTableName(), $table, $columns1, $columns2, $distinct);
+    }
+
+    public function selectInto(string $table, array $columns = [], string $in = '')
+    {
+        return $this->query->selectInto($this->getTableName(), $table, $columns, $in);
+    }
+
     public function delete()
     {
         return $this->query->delete($this->getTableName());

@@ -127,7 +127,7 @@ trait QueryBuilderTrait
         return $this;
     }
 
-    public function select(string $table, $columns = [], bool $distinct = false): self
+    public function select(string $table, $columns = [], bool $distinct = false, bool $set = true): self
     {
         $this->setCurrentTable($table);
 
@@ -141,7 +141,10 @@ trait QueryBuilderTrait
         $queryPart = implode(',', $keys);
         $queryPart = $queryPart[-1] === ',' ? substr($queryPart, 0, strlen($queryPart) - 1) : $queryPart;
 
-        $this->setQuery("SELECT " . ($distinct ? 'DISTINCT ' : '') . $queryPart . " FROM $table");
+        $m = $set ? 'setQuery' : 'addQuery';
+
+        $this->$m("SELECT " . ($distinct ? 'DISTINCT ' : '') . $queryPart . " FROM $table");
+
         return $this;
     }
 
@@ -238,11 +241,16 @@ trait QueryBuilderTrait
         return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col LIKE ?");
     }
 
-    public function whereIn($col, array $value)
+    public function whereIn($col, array $value, bool $not = false)
     {
         $this->values = array_merge($this->values, $value);
         $questionMarks = implode(', ', array_map(fn() => '?', $value));
-        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col IN($questionMarks)");
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col " . ($not ? "NOT " : "") .  "IN($questionMarks)");
+    }
+
+    public function whereNotIn($col, array $value)
+    {
+        return $this->whereIn($col, $value);
     }
 
     public function whereIsNull($col)
@@ -270,12 +278,12 @@ trait QueryBuilderTrait
         return $this->addQuery('NOT');
     }
 
-    public function whereBetween($col, $min, $max)
+    public function whereBetween($col, $min, $max, bool $not = false)
     {
         $this->values[] = $min;
         $this->values[] = $max;
 
-        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col BETWEEN ? AND ?");
+        return $this->addQuery((!preg_match('/WHERE/i', $this->query) ? "WHERE " : "") . "$col " . ($not ? "NOT " : "") .  "BETWEEN ? AND ?");
     }
 
     public function orderBy($col, $desc = false)
@@ -357,6 +365,12 @@ trait QueryBuilderTrait
         return $this->join($table, $currentTableColumn, $joinTableColumn);
     }
 
+    public function fullJoin(string $table, string $currentTableColumn, string $joinTableColumn)
+    {
+        $this->addQuery("FULL OUTER", true);
+        return $this->join($table, $currentTableColumn, $joinTableColumn);
+    }
+
     public function joinRaw(string $table, string $on)
     {
         return $this->addQuery("JOIN $table ON $on", true);
@@ -384,6 +398,37 @@ trait QueryBuilderTrait
     {
         $this->addQuery("CROSS", true);
         return $this->joinRaw($table, $on);
+    }
+
+    public function fullJoinRaw(string $table, string $on)
+    {
+        $this->addQuery("FULL OUTER", true);
+        return $this->joinRaw($table, $on);
+    }
+
+    public function insertSelect(string $table1, string $table2, array $columns1 = [], array $columns2 = [], bool $distinct = false)
+    {
+        $params = '';
+
+        if (!empty($columns1)) {
+            $params = implode(', ', $columns1);
+        }
+
+        $this->addQuery("INSERT INTO $table1" . (empty($columns1) ? "" : " ($params)"));
+        return $this->select($table2, $columns2, $distinct,false);
+    }
+
+    public function selectInto(string $table1, string $table2, array $columns = [], string $in = '')
+    {
+        $this->setCurrentTable($table1);
+
+        $params = '*';
+
+        if (!empty($columns)) {
+            $params = implode(', ', $columns);
+        }
+
+        return $this->addQuery("SELECT $params INTO $table2" . ($in === '' ? '' : " IN $in") . " FROM $table1");
     }
 
     public function execute($valuesOrQuery = null, bool $prepare = false): bool
