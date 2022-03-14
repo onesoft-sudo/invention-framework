@@ -26,6 +26,7 @@ use OSN\Framework\Utils\Arrayable;
 class Validator
 {
     use Rules;
+    use Sanitizers;
 
     public function __construct(array|object $data, protected array $rules)
     {
@@ -67,5 +68,51 @@ class Validator
                 }
             }
         }
+    }
+
+    /**
+     * @throws ValidatorException
+     */
+    public function validatedRaw(): array
+    {
+        $this->validate();
+        return $this->data;
+    }
+    
+    /**
+     * @throws ValidatorException
+     */
+    public function validated(): array
+    {
+        $this->validate();
+        return $this->sanitized();
+    }
+
+    public function sanitize()
+    {
+        foreach ($this->rules as $field => $rules) {
+            foreach ($rules as $rule) {
+                $ruleExploded = explode(':', $rule);
+                $ruleArguments = $ruleExploded[1] ?? [];
+
+                if (!empty($ruleArguments)) {
+                    $ruleArguments = explode(',', $ruleArguments);
+                }
+
+                $ruleMethod = "sanitize" . ucfirst($ruleExploded[0]);
+
+                if (method_exists($this, $ruleMethod)) {
+                    $this->sanitized[$field] = call_user_func_array([$this, $ruleMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments]);
+                }
+            }
+        }
+    }
+
+    public function sanitized(): array
+    {
+        if (empty($this->sanitized))
+            $this->sanitize();
+
+        return $this->sanitized;
     }
 }

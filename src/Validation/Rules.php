@@ -27,7 +27,7 @@ use OSN\Framework\Http\UploadedFile;
  */
 trait Rules
 {
-    protected array $data;
+    protected array $data = [];
 
     /**
      * Validate if the given field exists and not empty.
@@ -137,5 +137,32 @@ trait Rules
     protected function ruleImage($data): bool
     {
         return $data instanceof UploadedFile && $data->isImage();
+    }
+
+    /**
+     * Validate that the field value is unique in the database.
+     *
+     * @param $data
+     * @param string $field
+     * @param string $table
+     * @param string $column
+     * @return bool
+     */
+    protected function ruleUnique($data, string $field, string $table, string $column): bool
+    {
+        $statement = db()->prepare("SELECT $column FROM $table WHERE $column = ?");
+        $statement->execute([$data]);
+
+        return count($statement->fetchAll()) < 1;
+    }
+
+    protected function ruleFilterSpecialChars(): bool
+    {
+        return true;
+    }
+
+    protected function ruleFilterSpecialCharsFull(): bool
+    {
+        return true;
     }
 }
