@@ -19,6 +19,7 @@ namespace OSN\Framework\Core;
 
 
 use App\Models\User;
+use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use Error;
@@ -43,7 +44,7 @@ use PDO;
  * @method insert()
  * @method truncate()
  */
-abstract class Model implements JsonSerializable, IteratorAggregate, Countable
+abstract class Model implements JsonSerializable, IteratorAggregate, Countable, ArrayAccess
 {
     use ORMBaseTrait;
 
@@ -309,6 +310,26 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable
     public function count(): int
     {
         return count($this->data);
+    }
+
+    public function offsetExists($offset): bool
+    {
+        return isset($this->data[$offset]);
+    }
+
+    public function offsetGet($offset): mixed
+    {
+        return $this->data[$offset];
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->data[$offset] = $value;
+    }
+
+    public function offsetUnset($offset): void
+    {
+        unset($this->data[$offset]);
     }
 
     public function __call($name, $args)

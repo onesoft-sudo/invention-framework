@@ -20,16 +20,18 @@ namespace OSN\Framework\Core;
 
 use ArrayAccess;
 use Countable;
+use Exception;
 use Iterator;
+use IteratorAggregate;
 use JsonSerializable;
 use OSN\Framework\Exceptions\CollectionException;
+use Traversable;
 
-class Collection implements JsonSerializable, ArrayAccess, Iterator, Countable
+class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Countable
 {
     use CollectionArrayMethods;
 
     protected array $array;
-    protected int $pos = 0;
 
     /**
      * Collection constructor.
@@ -171,42 +173,8 @@ class Collection implements JsonSerializable, ArrayAccess, Iterator, Countable
         return array_udiff($this->array, $newUsers->array, $callback);
     }
 
-    /**
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function getIterator(): \ArrayIterator
     {
-        return $this->array[$this->pos];
-    }
-
-    #[\ReturnTypeWillChange]
-    public function next()
-    {
-        $this->pos++;
-    }
-
-    /**
-     * @return bool|float|int|string|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()
-    {
-        return $this->pos;
-    }
-
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid(): bool
-    {
-        return isset($this->array[$this->pos]);
-    }
-
-    #[\ReturnTypeWillChange]
-    public function rewind()
-    {
-        $this->pos = 0;
+        return new \ArrayIterator($this->array);
     }
 }
