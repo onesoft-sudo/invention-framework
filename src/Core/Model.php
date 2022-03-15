@@ -19,8 +19,11 @@ namespace OSN\Framework\Core;
 
 
 use App\Models\User;
+use ArrayIterator;
+use Countable;
 use Error;
 use Exception;
+use IteratorAggregate;
 use JsonSerializable;
 use OSN\Framework\Database\Query;
 use OSN\Framework\Database\QueryBuilderTrait;
@@ -40,7 +43,7 @@ use PDO;
  * @method insert()
  * @method truncate()
  */
-abstract class Model implements JsonSerializable
+abstract class Model implements JsonSerializable, IteratorAggregate, Countable
 {
     use ORMBaseTrait;
 
@@ -296,6 +299,16 @@ abstract class Model implements JsonSerializable
     public function cannot(string $action): bool
     {
         return !$this->can($action);
+    }
+
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    public function count(): int
+    {
+        return count($this->data);
     }
 
     public function __call($name, $args)

@@ -24,19 +24,25 @@ use OSN\Framework\Core\Model;
 
 abstract class Policy
 {
+    const ACTION_INDEX = 'index';
     const ACTION_VIEW = 'view';
     const ACTION_CREATE = 'create';
     const ACTION_UPDATE = 'update';
     const ACTION_DELETE = 'delete';
 
-    public function __construct(protected ?User $user, protected Model $model)
+    public function __construct(protected ?User $user, protected ?Model $model = null)
     {
 
     }
 
     public function can(string $action): bool
     {
-        $args = [$this->user, $this->model];
+        $args = [$this->user];
+
+        if ($action !== static::ACTION_INDEX) {
+            $args[] = $this->model;
+        }
+
         return method_exists($this, $action) ? (call_user_func_array([$this, $action], $args) ?? false) : false;
     }
 }

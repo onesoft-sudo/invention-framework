@@ -19,11 +19,12 @@ namespace OSN\Framework\Core;
 
 
 use ArrayAccess;
+use Countable;
 use Iterator;
 use JsonSerializable;
 use OSN\Framework\Exceptions\CollectionException;
 
-class Collection implements JsonSerializable, ArrayAccess, Iterator
+class Collection implements JsonSerializable, ArrayAccess, Iterator, Countable
 {
     use CollectionArrayMethods;
 

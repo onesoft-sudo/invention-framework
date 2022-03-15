@@ -15,14 +15,36 @@
  * limitations under the License.
  */
 
-namespace OSN\Framework\Utils\Security;
+namespace OSN\Framework\Security;
 
 
 use App\Models\User;
 use OSN\Framework\Core\App;
+use OSN\Framework\Core\Model;
 
 class Auth
 {
+    protected ?User $user = null;
+
+    public function __construct()
+    {
+        $q = App::db()->prepare("SELECT * FROM users WHERE uid = :uid");
+        $q->execute(["uid" => App::session()->get("uid")]);
+        $userData = $q->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($userData) > 0) {
+            $user = new User();
+
+            $user->uid = $userData[0]['uid'];
+            $user->name = $userData[0]['name'];
+            $user->email = $userData[0]['email'];
+            $user->username = $userData[0]['username'];
+            $user->password = $userData[0]['password'];
+
+            $this->user = $user;
+        }
+    }
+
     public function isAuthenticated(): bool
     {
         return App::session()->get("uid") !== null;
@@ -65,27 +87,20 @@ class Auth
             return null;
         }
 
-        $q = App::db()->prepare("SELECT * FROM users WHERE uid = :uid");
-        $q->execute(["uid" => App::session()->get("uid")]);
-        $userData = $q->fetchAll(\PDO::FETCH_ASSOC);
-
-        if (count($userData) > 0) {
-            $user = new User();
-
-            $user->uid = $userData[0]['uid'];
-            $user->name = $userData[0]['name'];
-            $user->email = $userData[0]['email'];
-            $user->username = $userData[0]['username'];
-            $user->password = $userData[0]['password'];
-
-            return $user;
-        }
-
-        return null;
+        return $this->user;
     }
 
     public function destroyAuth()
     {
         App::session()->destroy();
+    }
+
+    public function can(Model|string $model, string $action): bool
+    {
+        if (is_string($model)) {
+            $model = new $model();
+        }
+
+        return $model->can($action);
     }
 }
