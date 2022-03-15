@@ -30,6 +30,7 @@ use OSN\Framework\Exceptions\ModelException;
 use OSN\Framework\Exceptions\PropertyNotFoundException;
 use OSN\Framework\ORM\ORMBaseTrait;
 use OSN\Framework\ORM\Relationship;
+use OSN\Framework\Security\Policy;
 use PDO;
 
 
@@ -46,6 +47,7 @@ abstract class Model implements JsonSerializable
     protected array $data = [];
     protected array $fillable = [];
     protected array $guarded = [];
+    protected ?Policy $policy;
 
     public ?string $table = null;
     public self $pivot;
@@ -68,6 +70,16 @@ abstract class Model implements JsonSerializable
 
         $this->guarded[] = $this->primaryColumn;
         $this->_table = new Table($this->table, $this->primaryColumn, static::class);
+        $this->setPolicy();
+    }
+
+    /**
+     * @throws ModelException
+     */
+    protected function setPolicy()
+    {
+        $policy = config('namespaces')['policies'] . "\\" . get_base_class(static::class) . "Policy";
+        $this->policy = class_exists($policy) ? new $policy(auth()->user(), $this) : null;
     }
 
     protected function db(): Database
@@ -274,6 +286,16 @@ abstract class Model implements JsonSerializable
         }
 
         return $instance->_table;
+    }
+
+    public function can(string $action): bool
+    {
+        return $this->policy->can($action);
+    }
+
+    public function cannot(string $action): bool
+    {
+        return !$this->can($action);
     }
 
     public function __call($name, $args)

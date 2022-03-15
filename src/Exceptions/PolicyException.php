@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-namespace OSN\Framework\Policies;
+namespace OSN\Framework\Exceptions;
 
 
-class Policy
+class PolicyException extends \Exception
 {
 
 }

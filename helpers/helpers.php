@@ -450,6 +450,14 @@ if (!function_exists('elapsed_time')) {
     }
 }
 
+if (!function_exists('get_base_class')) {
+    function get_base_class(string $class): string
+    {
+        $array = explode("\\", $class);
+        return end($array);
+    }
+}
+
 
 
 
