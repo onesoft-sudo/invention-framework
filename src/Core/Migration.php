@@ -20,9 +20,12 @@ namespace OSN\Framework\Core;
 
 use OSN\Framework\Database\Schema;
 use OSN\Framework\Database\MySQL\Blueprint;
+use OSN\Framework\Foundation\Bootable;
 
 abstract class Migration
 {
+    use Bootable;
+
     protected string $migrationName;
     protected bool $entryLogging = true;
 
@@ -32,6 +35,7 @@ abstract class Migration
     public function __construct()
     {
         $this->migrationName = get_class($this);
+        $this->bootUp();
     }
 
     public function registerMigration($pdo)

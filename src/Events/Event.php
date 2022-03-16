@@ -91,7 +91,7 @@ abstract class Event implements EventInterface
         foreach (static::$handlers as $handler) {
             if (is_array($handler)) {
                 if (is_string($handler[0]))
-                    $handler[0] = new $handler[0]();
+                    $handler[0] = app()->createNewObject($handler[0]);
 
                 if (!isset($handler[1]))
                     $handler[1] = 'handle';

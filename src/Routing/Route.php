@@ -164,10 +164,10 @@ class Route
     {
         if ($middleware != null) {
             if (is_array($middleware)) {
-                $this->middleware = array_merge($this->middleware, array_map(fn($m) => is_string($m) ? new $m() : $m, $middleware));
+                $this->middleware = array_merge($this->middleware, array_map(fn($m) => is_string($m) ? app()->createNewObject($m) : $m, $middleware));
             }
             else
-                $this->middleware[] = is_string($middleware) ? new $middleware() : $middleware;
+                $this->middleware[] = is_string($middleware) ? app()->createNewObject($middleware) : $middleware;
 
             return $this;
         }

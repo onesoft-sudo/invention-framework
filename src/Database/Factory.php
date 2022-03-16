@@ -23,12 +23,15 @@ use Faker\Generator;
 use OSN\Framework\Core\Collection;
 use OSN\Framework\Core\Model;
 use OSN\Framework\Exceptions\FactoryLimitException;
+use OSN\Framework\Foundation\Bootable;
 
 /**
  * @property Factory model
  */
 abstract class Factory
 {
+    use Bootable;
+
     protected Generator $faker;
     protected int $count = 1;
     protected int $maxCount = 100;
@@ -43,6 +46,7 @@ abstract class Factory
     public function __construct()
     {
         $this->faker = FakerFactory::create();
+        $this->bootUp();
     }
 
     /**

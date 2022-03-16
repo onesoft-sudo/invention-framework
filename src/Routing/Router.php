@@ -187,7 +187,7 @@ class Router
                     continue;
                 }
 
-                $globals[] = new $globalMiddleware();
+                $globals[] = app()->createNewObject($globalMiddleware);
             }
 
             $middleware = array_merge($globals, $route->middleware(), $callback[0]->getMiddleware());
