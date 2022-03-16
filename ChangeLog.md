@@ -1,6 +1,7 @@
 # ChangeLog
 
 ### main (Under development)
+- Improved DI strategy [issue #18] (virtual-designer)
 - Added a few more query builder methods [issue #11] (virtual-designer)
 - Added advanced validation support [issue #12] (virtual-designer)
 - Added route-model binding support [issue #2] (virtual-designer)
