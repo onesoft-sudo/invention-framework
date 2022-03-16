@@ -20,7 +20,7 @@ namespace OSN\Framework\Attributes;
 use Attribute;
 
 /**
- * Class Route
+ * Represents a route.
  *
  * @package OSN\Framework\Attributes
  * @author Ar Rakin <rakinar2@gmail.com>
@@ -28,12 +28,30 @@ use Attribute;
 #[Attribute(Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Route
 {
+    /**
+     * The route path/URI.
+     *
+     * @var string
+     */
     public string $route;
+
+    /**
+     * The request method.
+     *
+     * @var string
+     */
     public string $method;
+
+    /**
+     * The name for the route.
+     *
+     * @var string
+     */
     public string $name;
 
     /**
      * Route constructor.
+     *
      * @param string $route
      * @param string $method
      * @param string $name

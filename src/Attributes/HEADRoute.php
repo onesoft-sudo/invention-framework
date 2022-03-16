@@ -21,7 +21,7 @@ use Attribute;
 use Pure;
 
 /**
- * Class HEADRoute
+ * Represents a HEAD route.
  *
  * @package OSN\Framework\Attributes
  * @author Ar Rakin <rakinar2@gmail.com>
@@ -29,6 +29,12 @@ use Pure;
 #[Attribute(Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class HEADRoute extends Route
 {
+    /**
+     * HEADRoute constructor.
+     *
+     * @param string $route
+     * @param string $name
+     */
     #[Pure]
     public function __construct(string $route, string $name = '')
     {

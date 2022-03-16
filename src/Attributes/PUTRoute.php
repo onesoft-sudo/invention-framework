@@ -21,7 +21,7 @@ use Attribute;
 use Pure;
 
 /**
- * Class PUTRoute
+ * Represents a PUT route.
  *
  * @package OSN\Framework\Attributes
  * @author Ar Rakin <rakinar2@gmail.com>
@@ -29,6 +29,12 @@ use Pure;
 #[Attribute(Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class PUTRoute extends Route
 {
+    /**
+     * PUTRoute constructor.
+     *
+     * @param string $route
+     * @param string $name
+     */
     #[Pure]
     public function __construct(string $route, string $name = '')
     {
