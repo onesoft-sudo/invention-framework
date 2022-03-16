@@ -32,6 +32,7 @@ use OSN\Framework\Database\Table;
 use OSN\Framework\Database\TableQueryTrait;
 use OSN\Framework\Exceptions\ModelException;
 use OSN\Framework\Exceptions\PropertyNotFoundException;
+use OSN\Framework\Foundation\Bootable;
 use OSN\Framework\ORM\ORMBaseTrait;
 use OSN\Framework\ORM\Relationship;
 use OSN\Framework\Security\Policy;
@@ -46,7 +47,7 @@ use PDO;
  */
 abstract class Model implements JsonSerializable, IteratorAggregate, Countable, ArrayAccess
 {
-    use ORMBaseTrait;
+    use ORMBaseTrait, Bootable;
 
     protected array $data = [];
     protected array $fillable = [];
@@ -75,6 +76,7 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         $this->guarded[] = $this->primaryColumn;
         $this->_table = new Table($this->table, $this->primaryColumn, static::class);
         $this->setPolicy();
+        $this->bootUp();
     }
 
     /**

@@ -19,10 +19,13 @@ namespace OSN\Framework\Database;
 
 
 use OSN\Framework\Core\Database;
+use OSN\Framework\Foundation\Bootable;
 use OSN\Invention\CLI\Console\DB\SeedCommand;
 
 abstract class Seeder
 {
+    use Bootable;
+
     protected Database $db;
 
     abstract public function execute(Database $db);
@@ -33,6 +36,7 @@ abstract class Seeder
     public function __construct()
     {
         $this->db = db();
+        $this->bootUp();
     }
 
     public function seed()

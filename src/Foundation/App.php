@@ -32,9 +32,9 @@ use OSN\Framework\Events\TriggersEvent;
  *
  * @package OSN\Framework\Foundation
  * @author Ar Rakin <rakinar2@gmail.com>
- * @property-read Config $config
- * @property-read Cache $cache
- * @property-read Database $db
+ * @property Config $config
+ * @property Cache $cache
+ * @property Database $db
  */
 abstract class App extends Container
 {

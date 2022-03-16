@@ -28,10 +28,10 @@ use OSN\Framework\View\View;
  * Class App
  *
  * @package App\Core
- * @property-read Request $request
- * @property-read Response $response
- * @property-read Router $router
- * @property-read Session $session
+ * @property Request $request
+ * @property Response $response
+ * @property Router $router
+ * @property Session $session
  */
 class App extends \OSN\Framework\Foundation\App
 {

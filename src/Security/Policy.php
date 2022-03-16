@@ -21,9 +21,12 @@ namespace OSN\Framework\Security;
 use App\Models\Post;
 use App\Models\User;
 use OSN\Framework\Core\Model;
+use OSN\Framework\Foundation\Bootable;
 
 abstract class Policy
 {
+    use Bootable;
+
     const ACTION_INDEX = 'index';
     const ACTION_VIEW = 'view';
     const ACTION_CREATE = 'create';
@@ -32,7 +35,7 @@ abstract class Policy
 
     public function __construct(protected ?User $user, protected ?Model $model = null)
     {
-
+        $this->bootUp();
     }
 
     public function can(string $action): bool
