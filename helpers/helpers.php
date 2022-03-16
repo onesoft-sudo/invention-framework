@@ -31,7 +31,14 @@ use OSN\Framework\Http\Response;
 use OSN\Framework\Utils\Security\CSRF;
 use OSN\Framework\View\View;
 
+
 if (!function_exists("auth")) {
+    /**
+     * Return a new Auth instance.
+     *
+     * @return Auth
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function auth(): Auth
     {
         return new Auth();
@@ -39,7 +46,13 @@ if (!function_exists("auth")) {
 }
 
 if (!function_exists("ddr")) {
-    function ddr($param)
+    /**
+     * Die-dump raw data.
+     *
+     * @param mixed $param
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
+    function ddr(mixed $param)
     {
         echo "<pre>";
         var_dump($param);
@@ -49,6 +62,12 @@ if (!function_exists("ddr")) {
 }
 
 if (!function_exists("dp")) {
+    /**
+     * Die-dump data using print_r().
+     *
+     * @param $param
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function dp($param)
     {
         echo "<pre>";
@@ -59,6 +78,12 @@ if (!function_exists("dp")) {
 }
 
 if (!function_exists("de")) {
+    /**
+     * Die-dump data using echo().
+     *
+     * @param $param
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function de($param)
     {
         echo "<pre>";
@@ -69,6 +94,12 @@ if (!function_exists("de")) {
 }
 
 if (!function_exists("session")) {
+    /**
+     * Return the session binding.
+     *
+     * @return Session
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function session(): Session
     {
         return App::$app->session();
@@ -76,6 +107,12 @@ if (!function_exists("session")) {
 }
 
 if (!function_exists("db")) {
+    /**
+     * Return the database binding.
+     *
+     * @return Database
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function db(): Database
     {
         return app()->db();
@@ -84,17 +121,16 @@ if (!function_exists("db")) {
 
 if (!function_exists("request")) {
     /**
-     * @param null $prop
+     * Return the request binding.
+     *
+     * @param string|null $prop The key name to fetch from $_POST, $_FILES or $_GET.
      * @return mixed|Request|null
      * @author Ar Rakin <rakinar2@gmail.com>
      */
     function request($prop = null)
     {
         if ($prop != null) {
-            if (App::request()->isWriteRequest())
-                return App::request()->post->$prop ?? '';
-            else
-                return App::request()->get->$prop ?? '';
+            return App::$app->request()->$prop;
         }
 
         return App::$app->request();
@@ -102,6 +138,13 @@ if (!function_exists("request")) {
 }
 
 if (!function_exists("collection")) {
+    /**
+     * Return a new empty collection.
+     *
+     * @param array $array
+     * @return Collection
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function collection($array = []): Collection
     {
         return new Collection($array);
@@ -109,6 +152,13 @@ if (!function_exists("collection")) {
 }
 
 if (!function_exists("response")) {
+    /**
+     * Return the response binding, or a new response instance.
+     *
+     * @param ...$params
+     * @return Response
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function response(...$params): Response
     {
         if (!empty($params)) {
@@ -120,6 +170,14 @@ if (!function_exists("response")) {
 }
 
 if (!function_exists("redirect")) {
+    /**
+     * Redirect the user to a specific location.
+     *
+     * @param $url
+     * @param int $code
+     * @return mixed
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function redirect($url, $code = 302)
     {
         return app()->response()->redirect($url, $code);
@@ -127,6 +185,12 @@ if (!function_exists("redirect")) {
 }
 
 if (!function_exists("isCLI")) {
+    /**
+     * Determine if the app is running in CLI.
+     *
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function isCLI(): bool
     {
         if (server('APP_ENV') == 'testing') {
@@ -140,6 +204,12 @@ if (!function_exists("isCLI")) {
 }
 
 if (!function_exists("headers")) {
+    /**
+     * Get all headers sent by the client.
+     *
+     * @return array|false
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function headers()
     {
         return function_exists("getallheaders") ? getallheaders() : [];
@@ -147,6 +217,14 @@ if (!function_exists("headers")) {
 }
 
 if (!function_exists("server")) {
+    /**
+     * Get data from $_SERVER.
+     *
+     * @param $key
+     * @param null $value
+     * @return mixed|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function server($key, $value = null)
     {
         if ($value !== null)
@@ -157,6 +235,12 @@ if (!function_exists("server")) {
 }
 
 if (!function_exists("app")) {
+    /**
+     * Return the CLI or CGI app instance.
+     *
+     * @return \OSN\Framework\Foundation\App
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function app()
     {
         if (isCLI()) {
@@ -169,6 +253,13 @@ if (!function_exists("app")) {
 }
 
 if (!function_exists("basepath")) {
+    /**
+     * Return the absolute path of a file according to the application root.
+     *
+     * @param string $path
+     * @return string
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function basepath($path = ''): string
     {
         return app()->config["root_dir"] . $path;
@@ -176,6 +267,13 @@ if (!function_exists("basepath")) {
 }
 
 if (!function_exists("view_exists")) {
+    /**
+     * Check if a view exists.
+     *
+     * @param $view
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function view_exists($view): bool
     {
         return file_exists(basepath('/resources/views/') . str_replace('.', '/', $view) . '.php');
@@ -183,6 +281,16 @@ if (!function_exists("view_exists")) {
 }
 
 if (!function_exists("abort")) {
+    /**
+     * Abort the application.
+     *
+     * @param int $code
+     * @param string|null $message
+     * @param array $headers
+     * @return bool
+     * @throws \OSN\Framework\Exceptions\HTTPException
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function abort(int $code = 500, ?string $message = null, array $headers = []): bool
     {
         throw new \OSN\Framework\Exceptions\HTTPException($code, $message == null ?? Response::getStatusFromCode($code), $headers);
@@ -190,6 +298,13 @@ if (!function_exists("abort")) {
 }
 
 if (!function_exists("is_collection")) {
+    /**
+     * Check if the given value is a collection.
+     *
+     * @param $collect
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function is_collection($collect): bool
     {
         return ($collect instanceof Collection);
@@ -198,6 +313,13 @@ if (!function_exists("is_collection")) {
 
 
 if (!function_exists("is_model")) {
+    /**
+     * Check if the given value is a model.
+     *
+     * @param $model
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function is_model($model): bool
     {
         return $model instanceof Model;
@@ -205,6 +327,12 @@ if (!function_exists("is_model")) {
 }
 
 if (!function_exists("test_env")) {
+    /**
+     * Check if the application is under testing.
+     *
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function test_env(): bool
     {
         return is_file(basepath("/var/test-lock"));
@@ -212,6 +340,13 @@ if (!function_exists("test_env")) {
 }
 
 if (!function_exists("now")) {
+    /**
+     * Return current time as a Carbon instance.
+     *
+     * @param null $tz
+     * @return Carbon
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function now($tz = null): Carbon
     {
         return Carbon::now($tz);
@@ -219,6 +354,13 @@ if (!function_exists("now")) {
 }
 
 if (!function_exists("is_jsonable")) {
+    /**
+     * Determine if the given value can be converted to JSON.
+     *
+     * @param $value
+     * @return bool
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function is_jsonable($value): bool
     {
         return is_array($value) || is_object($value) || $value instanceof JsonSerializable;
@@ -226,6 +368,13 @@ if (!function_exists("is_jsonable")) {
 }
 
 if (!function_exists("env")) {
+    /**
+     * Get an environment configuration variable value.
+     *
+     * @param $env
+     * @return mixed|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function env($env)
     {
         return app()->env[$env] ?? null;
@@ -233,6 +382,13 @@ if (!function_exists("env")) {
 }
 
 if (!function_exists("config")) {
+    /**
+     * Get the whole config or individual configs.
+     *
+     * @param null $c
+     * @return mixed|\OSN\Framework\Core\Config|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function config($c = null)
     {
         if ($c === null) {
@@ -243,11 +399,13 @@ if (!function_exists("config")) {
     }
 }
 
-/**
- * @todo
- */
-
 if (!function_exists("tmp_dir")) {
+    /**
+     * Return the temporary file directory of the app.
+     *
+     * @return mixed|string
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function tmp_dir()
     {
         return app()->env["TMP_DIR"] ?? (app()->config('root_dir') . '/var/tmp/');
@@ -255,6 +413,12 @@ if (!function_exists("tmp_dir")) {
 }
 
 if (!function_exists("cache_dir")) {
+    /**
+     * Return the cache file directory of the app.
+     *
+     * @return mixed|string
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function cache_dir()
     {
         return app()->env["CACHE_DIR"] ?? (app()->config('root_dir') . '/var/cache/');
@@ -262,6 +426,16 @@ if (!function_exists("cache_dir")) {
 }
 
 if (!function_exists("view")) {
+    /**
+     * Return a new view instance.
+     *
+     * @param string $name
+     * @param array $data
+     * @param string $layout
+     * @return View
+     * @throws \OSN\Framework\Exceptions\FileNotFoundException
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function view(string $name, array $data = [], $layout = ''): View
     {
         return new View($name, $data, $layout);
@@ -270,9 +444,10 @@ if (!function_exists("view")) {
 
 if (!function_exists("rrmdir")) {
     /**
-     * Taken from <https://www.php.net/manual/en/function.rmdir.php#117354>.
+     * Remove a directory recursively.
      *
      * @param $dir
+     * @link https://www.php.net/manual/en/function.rmdir.php#117354
      */
     function rrmdir($dir) {
         if (is_dir($dir)) {
@@ -291,7 +466,12 @@ if (!function_exists("rrmdir")) {
 }
 
 if (!function_exists("rrmdir_contents")) {
-
+    /**
+     * Remove directory contents.
+     *
+     * @param $dir
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function rrmdir_contents($dir) {
         if (!is_dir($dir))
             return;
@@ -316,7 +496,14 @@ if (!function_exists("rrmdir_contents")) {
     }
 }
 
+
 if (!function_exists('csrf_token')) {
+    /**
+     * Get a new CSRF token.
+     *
+     * @return string
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function csrf_token(): string
     {
         $csrf = new CSRF();
@@ -326,6 +513,11 @@ if (!function_exists('csrf_token')) {
 
 
 if (!function_exists('end_csrf_token')) {
+    /**
+     * Destroy the CSRF tokens.
+     *
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function end_csrf_token()
     {
         $csrf = new CSRF();
@@ -334,6 +526,12 @@ if (!function_exists('end_csrf_token')) {
 }
 
 if (!function_exists('println')) {
+    /**
+     * Print a new line with the given text.
+     *
+     * @param $value
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function println($value)
     {
         echo $value . "\n";
@@ -341,6 +539,13 @@ if (!function_exists('println')) {
 }
 
 if (!function_exists('errors')) {
+    /**
+     * Get the validation errors for the given field.
+     *
+     * @param $field
+     * @return mixed|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function errors($field)
     {
         if (!isset($GLOBALS['__validation_errors']))
@@ -351,6 +556,13 @@ if (!function_exists('errors')) {
 }
 
 if (!function_exists('old')) {
+    /**
+     * Get the previously submitted data.
+     *
+     * @param null $key
+     * @return array|mixed|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function old($key = null)
     {
         return request()->old($key);
@@ -358,6 +570,14 @@ if (!function_exists('old')) {
 }
 
 if (!function_exists('route')) {
+    /**
+     * Get a route with name.
+     *
+     * @param $name
+     * @param mixed ...$args The route parameter values
+     * @return Route|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function route($name, ...$args): ?Route
     {
         /**
@@ -365,11 +585,6 @@ if (!function_exists('route')) {
          */
         $route = App::$app->router->findByLogic(function (Route $route) use ($name) {
             $cond = true;
-//
-//            if ($method != null) {
-//                $cond = $route->method() == $method;
-//            }
-
             return $route->name() == $name && $cond;
         });
 
@@ -394,6 +609,13 @@ if (!function_exists('route')) {
 }
 
 if (!function_exists('error_first')) {
+    /**
+     * Get the first validation error of a field.
+     *
+     * @param $field
+     * @return mixed|null
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function error_first($field)
     {
         $errors = errors($field);
@@ -415,6 +637,8 @@ if (!function_exists('error_first')) {
 
 if (!function_exists('fire')) {
     /**
+     * Fire an event.
+     *
      * @throws EventException
      */
     function fire($event, ?callable $handler = null, array $data = [])
@@ -437,6 +661,13 @@ if (!function_exists('fire')) {
 }
 
 if (!function_exists('to_array')) {
+    /**
+     * Convert objects tp array.
+     *
+     * @param Arrayable $arrayable
+     * @return array
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function to_array(Arrayable $arrayable): array
     {
         return $arrayable->toArray();
@@ -444,6 +675,12 @@ if (!function_exists('to_array')) {
 }
 
 if (!function_exists('elapsed_time')) {
+    /**
+     * Get the elapsed time from the app start.
+     *
+     * @return float
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function elapsed_time()
     {
         return microtime(true) - APP_START;
@@ -451,6 +688,13 @@ if (!function_exists('elapsed_time')) {
 }
 
 if (!function_exists('get_base_class')) {
+    /**
+     * Get the base class name from the whole class (with namespaces)
+     *
+     * @param string $class
+     * @return string
+     * @author Ar Rakin <rakinar2@gmail.com>
+     */
     function get_base_class(string $class): string
     {
         $array = explode("\\", $class);
