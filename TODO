@@ -7,6 +7,7 @@
 + Implement seeders
 + Fix commands
 + Update session flash strategy
++ Add proper docblock comments
 ------------------------------------------------------
 + Implement ORM
 + Fix Commands
