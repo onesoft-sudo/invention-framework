@@ -29,9 +29,6 @@ use Symfony\Component\Console\Application;
 
 class App extends \OSN\Framework\Foundation\App
 {
-    public Arguments $argument;
-    public Commander $commander;
-
     public array $argv;
     public Application $symfonyApp;
 
@@ -43,9 +40,6 @@ class App extends \OSN\Framework\Foundation\App
         global $argv;
 
         $this->argv = $argv;
-        $this->db = new Database($this->env);
-        $this->argument = new Arguments();
-        $this->commander = new Commander($this->argument);
         $this->symfonyApp = new Application();
     }
 

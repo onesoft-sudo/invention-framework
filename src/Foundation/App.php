@@ -27,15 +27,20 @@ use OSN\Framework\Core\Initializable;
 use OSN\Framework\Events\BuiltIn\AppRunCompleteEvent;
 use OSN\Framework\Events\TriggersEvent;
 
+/**
+ * Class App
+ *
+ * @package OSN\Framework\Foundation
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @property-read Config $config
+ * @property-read Cache $cache
+ * @property-read Database $db
+ */
 abstract class App extends Container
 {
     use Initializable, TriggersEvent;
 
     public static self $app;
-    public Cache $cache;
-    public Config $config;
-    public Database $db;
-
     public array $env = [];
 
     public function __construct(string $rootpath, array $env = [])
@@ -49,29 +54,28 @@ abstract class App extends Container
 
         $this->env = $_ENV;
         self::$app = $this;
-        $this->config = new Config($rootpath . $this->env['CONF_FILE']);
-        $this->config->root_dir = $rootpath;
+
+        $this->bind(Config::class, function() use ($rootpath) {
+            $config = new Config($rootpath . $this->env['CONF_FILE']);
+            $config->root_dir = $rootpath;
+            return $config;
+        }, 'config', true);
+
         $this->loadInitializers();
         $this->preinit();
 
-        $this->cache = new Cache($rootpath . '/var/cache');
-        $this->db = new Database($this->env);
-
-        $this->bindings[Cache::class] = [
-            'callback' => fn() => $this->cache,
-            'once' => true,
-            'prop' => 'cache'
-        ];
-
-        $this->bindings[Database::class] = [
-            'callback' => fn() => $this->db,
-            'once' => true,
-            'prop' => 'db'
-        ];
+        $this->bind(Cache::class, fn() => new Cache($rootpath . '/var/cache'), 'cache', true);
+        $this->bind(Database::class, fn() => new Database($this->env), 'db', true);
+        $this->bind(static::class, fn() => $this, 'instance', true);
 
         $this->loadBindingsFromConfig();
         $this->boot();
         $this->init();
+    }
+
+    public static function getInstance(): App
+    {
+        return static::$app;
     }
 
     public function boot()

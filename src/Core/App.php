@@ -28,53 +28,22 @@ use OSN\Framework\View\View;
  * Class App
  *
  * @package App\Core
+ * @property-read Request $request
+ * @property-read Response $response
+ * @property-read Router $router
+ * @property-read Session $session
  */
 class App extends \OSN\Framework\Foundation\App
 {
-    public Router $router;
-    public Request $request;
-    public Response $response;
-    public Session $session;
-
     /**
      * @throws \Exception
      */
     public function boot()
     {
-        $this->session = new Session();
-        $this->request = new Request();
-        $this->response = new Response();
-        $this->router = new Router($this->request, $this->response);
-
-        $this->bindings[Request::class] = [
-            'callback' => fn() => $this->request,
-            'once' => true,
-            'prop' => 'request'
-        ];
-
-        $this->bindings[Response::class] = [
-            'callback' => fn() => $this->response,
-            'once' => true,
-            'prop' => 'response'
-        ];
-
-        $this->bindings[Config::class] = [
-            'callback' => fn() => $this->config,
-            'once' => true,
-            'prop' => 'config'
-        ];
-
-        $this->bindings[Session::class] = [
-            'callback' => fn() => $this->session,
-            'once' => true,
-            'prop' => 'session'
-        ];
-
-        $this->bindings[Router::class] = [
-            'callback' => fn() => $this->router,
-            'once' => true,
-            'prop' => 'router'
-        ];
+        $this->bind(Session::class, fn() => new Session(), 'session', true);
+        $this->bind(Response::class, fn() => new Response(), 'response', true);
+        $this->bind(Request::class, fn() => new Request(), 'request', true);
+        $this->bind(Router::class, fn() => new Router($this->request, $this->response), 'router', true);
     }
 
     public static function session(): Session

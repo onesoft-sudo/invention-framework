@@ -175,7 +175,7 @@ class Router
 
         if (is_array($callback)) {
             /** @var string[]|Controller[] */
-            $callback[0] = new $callback[0]();
+            $callback[0] = app()->createNewObject($callback[0]);
             $callback[1] = $callback[1] ?? 'index';
             $globals = [];
 
