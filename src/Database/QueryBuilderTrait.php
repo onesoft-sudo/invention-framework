@@ -198,29 +198,26 @@ trait QueryBuilderTrait
      * @param null $operator
      * @return Query|QueryBuilderTrait|null
      */
-    public function where($cond, $valueOrMode = null, $operator = null)
+    public function where(string|array $cond, $valueOrMode = null, $operator = null)
     {
-        if (is_string($cond) && $valueOrMode !== null) {
+        if (is_string($cond)) {
             $this->values[] = $valueOrMode;
             $operator = $operator ?? '=';
+            $cond = $cond ?? '';
             return $this->whereCustom("$cond $operator ?", !preg_match('/WHERE/i', $this->query));
         }
 
-        if (is_array($cond)) {
-            $values = [];
-            $q = [];
+        $values = [];
+        $q = [];
 
-            foreach ($cond as $cond_item) {
-                $q[] = "{$cond_item[0]} {$cond_item[1]} ?";
-                $values[] = $cond_item[2];
-            }
-
-            $query = implode($valueOrMode === true ? ' OR ' : ' AND ', $q);
-            $this->values = array_merge($this->values, $values);
-            return $this->whereCustom($query, !preg_match('/WHERE/i', $this->query));
+        foreach ($cond as $cond_item) {
+            $q[] = "{$cond_item[0]} {$cond_item[1]} ?";
+            $values[] = $cond_item[2];
         }
 
-        return null;
+        $query = implode($valueOrMode === true ? ' OR ' : ' AND ', $q);
+        $this->values = array_merge($this->values, $values);
+        return $this->whereCustom($query, !preg_match('/WHERE/i', $this->query));
     }
 
     public function orWhere($cond, $valueOrMode = null)
