@@ -83,6 +83,21 @@ abstract class App extends Container
 
     }
 
+    public static function config($key)
+    {
+        return static::$app->config[$key] ?? false;
+    }
+
+    public static function db(): Database
+    {
+        return static::$app->db;
+    }
+
+    public static function env(): array
+    {
+        return static::$app->env;
+    }
+
     public function run()
     {
         static::dispatch(AppRunCompleteEvent::class, [
