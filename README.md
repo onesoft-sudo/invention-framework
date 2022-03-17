@@ -4,7 +4,9 @@
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/php.yml/badge.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework/badge)](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework)
 ![Progress](https://progress-bar.dev/80?title=Development)
+![](https://img.shields.io/github/license/onesoft-sudo/invention-framework?color=%23007bff&label=License)
 ![](https://img.shields.io/packagist/dt/osn/invention-framework?label=Downloads) 
+<!--![Packagist Version (including pre-releases)](https://img.shields.io/packagist/v/osn/invention-framework?include_prereleases&label=Packagist)-->
 
 The next level PHP framework.
 
