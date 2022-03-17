@@ -1,7 +1,7 @@
 ![Invention Framework](https://repository-images.githubusercontent.com/438729131/0c5749e4-96da-4f48-b2d0-0d931478b79c)
  
 # Invention Framework
-![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/php.yml/badge.svg)
+![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/build/badge.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework/badge)](https://www.codefactor.io/repository/github/onesoft-sudo/invention-framework)
 ![Progress](https://progress-bar.dev/80?title=Development)
 ![](https://img.shields.io/github/license/onesoft-sudo/invention-framework?color=%23007bff&label=License)
