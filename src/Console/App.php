@@ -29,10 +29,23 @@ use Symfony\Component\Console\Application;
 
 class App extends \OSN\Framework\Foundation\App
 {
+    /**
+     * The command-line argument array.
+     *
+     * @var array
+     */
     public array $argv;
+
+    /**
+     * The Symfony application instance.
+     *
+     * @var Application
+     */
     public Application $symfonyApp;
 
     /**
+     * Bootstrap the app services.
+     *
      * @throws \Exception
      */
     public function boot()
@@ -41,21 +54,6 @@ class App extends \OSN\Framework\Foundation\App
 
         $this->argv = $argv;
         $this->symfonyApp = new Application();
-    }
-
-    public static function config($key)
-    {
-        return self::$app->config[$key] ?? false;
-    }
-
-    public static function env(): array
-    {
-        return self::$app->env;
-    }
-
-    public static function db(): Database
-    {
-        return self::$app->db;
     }
 
     public function add(\Symfony\Component\Console\Command\Command $cmd): ?\Symfony\Component\Console\Command\Command

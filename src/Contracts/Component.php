@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-namespace OSN\Framework\PowerParser;
+namespace OSN\Framework\Contracts;
 
+use OSN\Framework\View\View;
 
-trait ParseData
+/**
+ * The component contract.
+ *
+ * @package OSN\Framework\Contracts
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
+interface Component extends \Stringable
 {
-    protected function replacements(): array
-    {
-        return [
-            "!{{" => '<?php ',
-            "}}!" => '; ?>',
-            "{{" => '<?= htmlspecialchars((string) ',
-            "}}" => '); ?>',
-            "!{" => '<?= ',
-            "}!" => ' ?>',
-            ":{:" => '{{',
-            ":}:" => '}}',
-        ];
-    }
+    /**
+     * Render the component view.
+     *
+     * @return View
+     */
+    public function render(): View;
 }

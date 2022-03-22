@@ -48,27 +48,17 @@ class App extends \OSN\Framework\Foundation\App
 
     public static function session(): Session
     {
-        return self::$app->session;
-    }
-
-    public static function db(): Database
-    {
-        return self::$app->db;
+        return static::$app->session;
     }
 
     public static function request(): Request
     {
-        return self::$app->request;
+        return static::$app->request;
     }
 
     public static function response(): Response
     {
-        return self::$app->response;
-    }
-
-    public static function config($key)
-    {
-        return self::$app->config[$key];
+        return static::$app->response;
     }
 
     public function run()

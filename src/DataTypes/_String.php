@@ -17,7 +17,14 @@
 
 namespace OSN\Framework\DataTypes;
 
-
+/**
+ * A wrapper for strings, which provides a lot of useful methods
+ * for working with strings.
+ *
+ * @package OSN\Framework\DataTypes
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @todo Add Docblock
+ */
 class _String implements DataTypeInterface
 {
     private string $data;
@@ -52,9 +59,35 @@ class _String implements DataTypeInterface
         $this->data = (string) $value;
     }
 
-    /**
+    /*
      * The helper methods.
      */
+
+    public function slug2camel(): static
+    {
+        return new static(str_replace(' ', '', lcfirst(ucwords(str_replace('-', ' ', $this->data)))));
+    }
+
+    public function slug2className(): static
+    {
+        return new static(str_replace(' ', '', ucwords(str_replace('-', ' ', $this->data))));
+    }
+
+    public function removeExtraQuotes()
+    {
+        $value = $this->data;
+
+        if (($value[0] === '"' && $value[-1] === '"') || ($value[0] === "'" && $value[-1] === "'")) {
+            $value = substr($value, 1, -1);
+        }
+
+        return new static($value);
+    }
+
+    public static function from(string|\Stringable $str)
+    {
+        return new static($str);
+    }
 
     public function len(bool $countWhiteSpaces = true): int
     {
