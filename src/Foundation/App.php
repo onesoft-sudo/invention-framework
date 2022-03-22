@@ -28,7 +28,7 @@ use OSN\Framework\Events\BuiltIn\AppRunCompleteEvent;
 use OSN\Framework\Events\TriggersEvent;
 
 /**
- * Class App
+ * The base application class.
  *
  * @package OSN\Framework\Foundation
  * @author Ar Rakin <rakinar2@gmail.com>
@@ -40,9 +40,26 @@ abstract class App extends Container
 {
     use Initializable, TriggersEvent;
 
+    /**
+     * The current application instance.
+     *
+     * @var App|$this
+     */
     public static self $app;
+
+    /**
+     * The environment variables.
+     *
+     * @var array
+     */
     public array $env = [];
 
+    /**
+     * App constructor.
+     *
+     * @param string $rootpath
+     * @param array $env
+     */
     public function __construct(string $rootpath, array $env = [])
     {
         if (server('APP_TESTING') == '1') {
@@ -73,31 +90,62 @@ abstract class App extends Container
         $this->init();
     }
 
+    /**
+     * Get the current app instance.
+     *
+     * @return App
+     */
     public static function getInstance(): App
     {
         return static::$app;
     }
 
+    /**
+     * Bootstrap the app services.
+     *
+     * @return void
+     */
     public function boot()
     {
 
     }
 
+    /**
+     * Get a config variable value.
+     *
+     * @param $key
+     * @return false|mixed
+     */
     public static function config($key)
     {
         return static::$app->config[$key] ?? false;
     }
 
+    /**
+     * Get the database component instance.
+     *
+     * @return Database
+     */
     public static function db(): Database
     {
         return static::$app->db;
     }
 
+    /**
+     * Get the environment variables.
+     *
+     * @return array
+     */
     public static function env(): array
     {
         return static::$app->env;
     }
 
+    /**
+     * Run the application.
+     *
+     * @throws \OSN\Framework\Exceptions\EventException
+     */
     public function run()
     {
         static::dispatch(AppRunCompleteEvent::class, [

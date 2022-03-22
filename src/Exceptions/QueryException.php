@@ -20,6 +20,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class QueryException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class QueryException extends Exception
 {
     protected $code = 6;

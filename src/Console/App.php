@@ -27,6 +27,12 @@ use OSN\Framework\Events\TriggersEvent;
 use OSN\Framework\Exceptions\CommandNotFoundException;
 use Symfony\Component\Console\Application;
 
+/**
+ * The console application class.
+ *
+ * @package OSN\Framework\Console
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class App extends \OSN\Framework\Foundation\App
 {
     /**
@@ -46,7 +52,7 @@ class App extends \OSN\Framework\Foundation\App
     /**
      * Bootstrap the app services.
      *
-     * @throws \Exception
+     * @return void
      */
     public function boot()
     {
@@ -56,11 +62,23 @@ class App extends \OSN\Framework\Foundation\App
         $this->symfonyApp = new Application();
     }
 
+    /**
+     * Add a command to the app.
+     *
+     * @param \Symfony\Component\Console\Command\Command $cmd
+     * @return \Symfony\Component\Console\Command\Command|null
+     */
     public function add(\Symfony\Component\Console\Command\Command $cmd): ?\Symfony\Component\Console\Command\Command
     {
         return $this->symfonyApp->add($cmd);
     }
 
+    /**
+     * Run the application.
+     *
+     * @param null $input
+     * @param null $output
+     */
     public function run($input = null, $output = null)
     {
         try {

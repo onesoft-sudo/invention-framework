@@ -20,8 +20,20 @@ namespace OSN\Framework\Database\SQLite;
 use \OSN\Framework\Database\Common\Blueprint as CommonBlueprint;
 use \OSN\Framework\Database\Common\Column as CommonColumn;
 
+/**
+ * Blueprint class for using with SQLite.
+ *
+ * @package OSN\Framework\Database\SQLite
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Blueprint extends CommonBlueprint
 {
+    /**
+     * Add a primary key column for using as IDs.
+     *
+     * @param string $column
+     * @return CommonColumn
+     */
     public function id(string $column = 'id'): CommonColumn
     {
         $col = $this->int($column);
@@ -30,11 +42,23 @@ class Blueprint extends CommonBlueprint
         return $col;
     }
 
+    /**
+     * Add an unsigned bigint column.
+     *
+     * @param string $column
+     * @return CommonColumn
+     */
     public function unsignedBigInt(string $column)
     {
         return $this->add("$column UNSIGNED BIG INT", '', '', false);
     }
 
+    /**
+     * Add a primary key.
+     *
+     * @param string $col
+     * @return CommonColumn|null
+     */
     public function primaryKey(string $col): ?CommonColumn
     {
         foreach ($this->columns as $column) {

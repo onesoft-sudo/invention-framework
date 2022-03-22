@@ -17,7 +17,12 @@
 
 namespace OSN\Framework\Exceptions;
 
-
+/**
+ * Class PolicyException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class PolicyException extends \Exception
 {
 

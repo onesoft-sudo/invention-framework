@@ -20,6 +20,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class ArgumentException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class ArgumentException extends Exception
 {
     protected $code = 3;

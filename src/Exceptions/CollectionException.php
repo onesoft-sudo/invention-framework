@@ -20,6 +20,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class CollectionException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class CollectionException extends Exception
 {
     protected $code = 1;

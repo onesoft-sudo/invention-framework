@@ -20,38 +20,85 @@ namespace OSN\Framework\Core;
 
 use ArrayAccess;
 
+/**
+ * Class Config.
+ * The configuration manager.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Config implements ArrayAccess
 {
+    /**
+     * The configuration array.
+     *
+     * @var array
+     */
     protected array $conf;
+
+    /**
+     * The configuration file path.
+     *
+     * @var string
+     */
     protected string $conf_file;
 
+    /**
+     * Config constructor.
+     *
+     * @param $file
+     */
     public function __construct($file)
     {
         $this->conf_file = $file;
         $this->load();
     }
 
+    /**
+     * Get a configuration setting.
+     *
+     * @param $name
+     * @return mixed|null
+     */
     public function __get($name)
     {
         return $this->conf[$name] ?? null;
     }
 
+    /**
+     * Set a configuration setting.
+     *
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->conf[$name] = $value;
     }
 
+    /**
+     * Load the configuration.
+     *
+     * @return void
+     */
     protected function load()
     {
        $this->conf = require($this->conf_file);
     }
 
+    /**
+     * Get the whole configuration array.
+     *
+     * @return array
+     */
     public function getAll(): array
     {
         return $this->conf;
     }
 
     /**
+     * Determine if an offset exists.
+     *
      * @param mixed $offset
      * @return bool
      */
@@ -62,6 +109,8 @@ class Config implements ArrayAccess
     }
 
     /**
+     * Get an offset value.
+     *
      * @param mixed $offset
      * @return mixed
      */
@@ -72,6 +121,8 @@ class Config implements ArrayAccess
     }
 
     /**
+     * Set the given value to the given offset.
+     *
      * @param mixed $offset
      * @param mixed $value
      */
@@ -82,6 +133,8 @@ class Config implements ArrayAccess
     }
 
     /**
+     * Unset an offset.
+     *
      * @param mixed $offset
      */
     #[\ReturnTypeWillChange]

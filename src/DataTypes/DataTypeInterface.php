@@ -19,22 +19,30 @@ namespace OSN\Framework\DataTypes;
 
 
 /**
- * Interface DataTypeInterface
+ * The primary interface for custom data types.
+ *
  * @package OSN\Framework\DataTypes
+ * @author Ar Rakin <rakinar2@gmail.com>
  */
 interface DataTypeInterface
 {
     /**
-     * @return mixed
+     * Return the string representation of the object.
+     *
+     * @return string
      */
     public function __toString();
 
     /**
+     * Get the value.
+     *
      * @return mixed
      */
     public function get();
 
     /**
+     * Set the value.
+     *
      * @param $value
      * @return static|void
      */

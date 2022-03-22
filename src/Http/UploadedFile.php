@@ -20,8 +20,19 @@ namespace OSN\Framework\Http;
 
 use JsonSerializable;
 
+/**
+ * The uploaded file wrapper class.
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class UploadedFile implements JsonSerializable, \Stringable
 {
+    /**
+     * Image file mime types.
+     *
+     * @var string[]
+     */
     protected static $imageTypes = [
         "image/png",
         "image/gif",
@@ -44,16 +55,74 @@ class UploadedFile implements JsonSerializable, \Stringable
         "image/x-xwindowdump",
     ];
 
+    /**
+     * The raw data about the file, via $_FILES.
+     *
+     * @var array
+     */
     protected array $raw;
+
+    /**
+     * The file name.
+     *
+     * @var string|mixed
+     */
     public string $name;
+
+    /**
+     * File temporary name.
+     *
+     * @var string|mixed
+     */
     public string $tmpName;
+
+    /**
+     * The error code. 0 means no error.
+     *
+     * @var int|mixed
+     */
     public int $error;
+
+    /**
+     * Determine if there is an error.
+     *
+     * @var bool
+     */
     public bool $hasError;
+
+    /**
+     * Full path of the file.
+     *
+     * @var string|mixed
+     */
     public string $fullPath;
+
+    /**
+     * File mime type.
+     *
+     * @var string|mixed
+     */
     public string $mimeType;
+
+    /**
+     * File size in bytes.
+     *
+     * @var int|mixed
+     */
     public int $size;
+
+    /**
+     * Determine if the file is saved/
+     *
+     * @var bool
+     */
     public bool $isSaved;
 
+    /**
+     * UploadedFile constructor.
+     *
+     * @param array $rawData
+     */
     public function __construct(array $rawData)
     {
         $this->raw = $rawData;
@@ -67,6 +136,11 @@ class UploadedFile implements JsonSerializable, \Stringable
         $this->isSaved = false;
     }
 
+    /**
+     * Serialize the object.
+     *
+     * @return array
+     */
     public function __serialize(): array
     {
         return [
@@ -80,6 +154,11 @@ class UploadedFile implements JsonSerializable, \Stringable
         ];
     }
 
+    /**
+     * Un-serialize the object.
+     *
+     * @param array $data
+     */
     public function __unserialize(array $data): void
     {
         static::__construct($data);
@@ -96,6 +175,8 @@ class UploadedFile implements JsonSerializable, \Stringable
     }
 
     /**
+     * Convert the object ot string.
+     *
      * @return string
      */
     public function __toString()
@@ -103,6 +184,11 @@ class UploadedFile implements JsonSerializable, \Stringable
         return $this->name;
     }
 
+    /**
+     * Get the size in readable format (KB, MB).
+     *
+     * @return string
+     */
     public function getSizeReadable(): string
     {
         $size = $this->size;
@@ -128,11 +214,21 @@ class UploadedFile implements JsonSerializable, \Stringable
         return number_format($size, 2) . $unit;
     }
 
+    /**
+     * Save the file.
+     *
+     * @todo Implement
+     */
     public function save()
     {
         $this->isSaved = true;
     }
 
+    /**
+     * Check if the file is an image, via the mime type.
+     *
+     * @return bool
+     */
     public function isImage(): bool
     {
         return in_array($this->mimeType, static::$imageTypes);

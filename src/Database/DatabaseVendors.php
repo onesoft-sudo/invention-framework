@@ -17,7 +17,12 @@
 
 namespace OSN\Framework\Database;
 
-
+/**
+ * Class DatabaseVendors
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class DatabaseVendors
 {
     public static array $vendors = [

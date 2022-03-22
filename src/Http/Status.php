@@ -17,7 +17,13 @@
 
 namespace OSN\Framework\Http;
 
-
+/**
+ * Class Status
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @deprecated
+ */
 class Status
 {
     use ResponseTrait;

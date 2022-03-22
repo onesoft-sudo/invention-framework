@@ -18,6 +18,7 @@
 namespace OSN\Framework\Core;
 
 
+use Exception;
 use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
@@ -25,18 +26,21 @@ use OSN\Framework\Routing\Router;
 use OSN\Framework\View\View;
 
 /**
- * Class App
+ * The HTTP application class.
  *
  * @package App\Core
  * @property Request $request
  * @property Response $response
  * @property Router $router
  * @property Session $session
+ * @author Ar Rakin <rakinar2@gmail.com>
  */
 class App extends \OSN\Framework\Foundation\App
 {
     /**
-     * @throws \Exception
+     * Bootstrap the app services.
+     *
+     * @return void
      */
     public function boot()
     {
@@ -46,21 +50,42 @@ class App extends \OSN\Framework\Foundation\App
         $this->bind(Router::class, fn() => new Router($this->request, $this->response), 'router', true);
     }
 
+    /**
+     * Get the session component.
+     *
+     * @return Session
+     */
     public static function session(): Session
     {
         return static::$app->session;
     }
 
+    /**
+     * Get the request component.
+     *
+     * @return Request
+     */
     public static function request(): Request
     {
         return static::$app->request;
     }
 
+    /**
+     * Get the response component.
+     *
+     * @return Response
+     */
     public static function response(): Response
     {
         return static::$app->response;
     }
 
+    /**
+     * Run the app.
+     *
+     * @return void
+     * @throws \OSN\Framework\Exceptions\FileNotFoundException
+     */
     public function run()
     {
         try {

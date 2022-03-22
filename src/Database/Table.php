@@ -22,10 +22,23 @@ use OSN\Framework\Core\Collection;
 use OSN\Framework\Core\Database;
 use OSN\Framework\Core\Model;
 
+/**
+ * The Table class.
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Table
 {
     use TableQueryTrait;
 
+    /**
+     * Table constructor.
+     *
+     * @param string $tableName
+     * @param string $primaryKey
+     * @param string $model
+     */
     public function __construct(string $tableName = '', string $primaryKey = 'id', string $model = '')
     {
         $this->db = db();

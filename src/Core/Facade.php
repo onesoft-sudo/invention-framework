@@ -23,6 +23,7 @@ use ReflectionException;
 /**
  * Class Facade
  * @package OSN\Framework\Core
+ * @todo Update strategy
  */
 class Facade
 {

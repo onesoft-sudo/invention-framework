@@ -26,23 +26,56 @@ use OSN\Framework\Exceptions\FactoryLimitException;
 use OSN\Framework\Foundation\Bootable;
 
 /**
- * @property Factory model
+ * Database Factory.
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @property Factory $model
  */
 abstract class Factory
 {
     use Bootable;
 
+    /**
+     * The faker generator instance.
+     *
+     * @var Generator
+     */
     protected Generator $faker;
+
+    /**
+     * Count of rows to create.
+     *
+     * @var int
+     */
     protected int $count = 1;
+
+    /**
+     * Max row count. $this->count must not exceed this limit.
+     *
+     * @var int
+     */
     protected int $maxCount = 100;
 
     /**
+     * Different states.
+     *
      * @var Closure[]
      */
     protected array $states = [];
 
+    /**
+     * Definition of the factory.
+     *
+     * @return array
+     */
     abstract protected function define(): array;
 
+    /**
+     * Factory constructor.
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->faker = FakerFactory::create();
@@ -50,9 +83,13 @@ abstract class Factory
     }
 
     /**
+     * Make the rows without making any changes to the DB.
+     *
+     * @param bool $one
+     * @return Model|Collection
      * @throws FactoryLimitException
      */
-    public function make(bool $one = true)
+    public function make(bool $one = true): Model|Collection
     {
         $array = [];
 
@@ -78,6 +115,12 @@ abstract class Factory
         return $this->count == 1 && $one ? $array[0] : collection($array);
     }
 
+    /**
+     * Set the row count.
+     *
+     * @param int $count
+     * @return $this
+     */
     public function count(int $count): self
     {
         $this->count = $count;
@@ -85,6 +128,9 @@ abstract class Factory
     }
 
     /**
+     * Create the rows in the DB.
+     *
+     * @return Collection
      * @throws FactoryLimitException
      */
     public function create(): Collection
@@ -99,17 +145,35 @@ abstract class Factory
         return $models;
     }
 
+    /**
+     * Add a state.
+     *
+     * @param Closure $callback The state definition.
+     * @return $this
+     */
     public function state(Closure $callback): self
     {
         $this->states[] = $callback;
         return $this;
     }
 
+    /**
+     * Create a new instance of the factory.
+     *
+     * @return static
+     */
     public static function newInstance(): self
     {
         return new static();
     }
 
+    /**
+     * Create a new model from the definition.
+     *
+     * @return Model
+     * @throws FactoryLimitException
+     * @throws \OSN\Framework\Exceptions\CollectionException
+     */
     public static function new(): Model
     {
         return self::newInstance()->count(1)->make()->get(0);

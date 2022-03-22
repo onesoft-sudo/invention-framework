@@ -19,6 +19,12 @@ namespace OSN\Framework\Exceptions;
 
 use Throwable;
 
+/**
+ * Class PropertyNotFoundException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class PropertyNotFoundException extends \Exception
 {
     protected $code = 2;

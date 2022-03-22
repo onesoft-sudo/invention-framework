@@ -17,16 +17,31 @@
 
 namespace OSN\Framework\Database\SQLite;
 
-use \OSN\Framework\Database\Common\Column as CommonColumn;
+use OSN\Framework\Database\Common\Column as CommonColumn;
 
+/**
+ * Column class for using with SQLite.
+ *
+ * @package OSN\Framework\Database\SQLite
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Column extends CommonColumn
 {
-
+    /**
+     * Append AUTO_INCREMENT.
+     *
+     * @return $this
+     */
     public function autoIncrement(): self
     {
         return $this->append(" AUTOINCREMENT", false);
     }
 
+    /**
+     * Add a primary key for this column.
+     *
+     * @return $this
+     */
     public function primaryKey(): self
     {
         $name = $this->column;

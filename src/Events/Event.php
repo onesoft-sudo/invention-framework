@@ -22,23 +22,47 @@ use OSN\Framework\Exceptions\EventException;
 use OSN\Framework\Contracts\Event as EventInterface;
 
 /**
- * Class Event
+ * Base event class.
  *
  * @package OSN\Framework\Events
  * @author Ar Rakin <rakinar2@gmail.com>
+ * @todo
  */
 abstract class Event implements EventInterface
 {
+    /**
+     * Determine if the event is fired.
+     *
+     * @var bool
+     */
     protected bool $fired;
 
     /**
+     * Handlers of this event.
+     *
      * @var callable[]
      */
     protected static array $handlers = [];
 
+    /**
+     * The timestamp.
+     *
+     * @var Carbon
+     */
     public Carbon $timestamp;
+
+    /**
+     * Event status code.
+     *
+     * @var int|mixed
+     */
     public int $statusCode;
 
+    /**
+     * Event constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data = [])
     {
         $this->fired = false;
@@ -48,40 +72,68 @@ abstract class Event implements EventInterface
     }
 
     /**
+     * Get the timestamp.
+     *
      * @return Carbon
-     * @author Ar Rakin <rakinar2@gmail.com>
      */
     public function timestamp(): Carbon
     {
         return $this->timestamp;
     }
 
+    /**
+     * Set the event status to fired.
+     *
+     * @return void
+     */
     public function setFired()
     {
         $this->fired = true;
     }
 
+    /**
+     * Determine if the event is fired.
+     *
+     * @return bool
+     */
     public function isFired(): bool
     {
         return $this->fired;
     }
 
+    /**
+     * Get handlers of this invent.
+     *
+     * @return callable[]
+     */
     public static function getHandlers(): array
     {
         return static::$handlers;
     }
 
+    /**
+     * Set handler for this event.
+     *
+     * @param callable $callback
+     */
     public static function setHandler($callback)
     {
         static::$handlers = [$callback];
     }
 
+    /**
+     * Add a new handler of this event.
+     *
+     * @param callable $callback
+     */
     public static function addHandler($callback)
     {
         static::$handlers[] = $callback;
     }
 
     /**
+     * Fire all handlers of this event.
+     *
      * @return mixed
      */
     public function fireHandlers()
@@ -106,6 +158,12 @@ abstract class Event implements EventInterface
         return $data;
     }
 
+    /**
+     * Fire the event.
+     *
+     * @param array $data
+     * @return mixed|void|null
+     */
     public static function fire(array $data = [])
     {
         $event = new static($data);
@@ -113,9 +171,19 @@ abstract class Event implements EventInterface
         return $event->fireHandlers();
     }
 
+    /**
+     * Execute the event.
+     *
+     * @return mixed|void
+     */
     public function execute()
     {}
 
+    /**
+     * Stop executing the event.
+     *
+     * @return mixed|void
+     */
     public function stop()
     {}
 }

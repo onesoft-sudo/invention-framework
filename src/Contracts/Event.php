@@ -85,6 +85,8 @@ interface Event
 
     /**
      * Fire an event.
+     *
+     * @return void
      */
     public static function fire(array $data = []);
 }

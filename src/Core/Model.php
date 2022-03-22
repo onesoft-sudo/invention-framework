@@ -40,6 +40,8 @@ use PDO;
 
 
 /**
+ * The base model class.
+ *
  * @method select(array|string $data = [])
  * @method patch()
  * @method insert()
@@ -49,18 +51,83 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
 {
     use ORMBaseTrait, Bootable;
 
+    /**
+     * The raw data.
+     *
+     * @var array
+     */
     protected array $data = [];
+
+    /**
+     * The list of fillable properties (mass assignment).
+     *
+     * @var array
+     */
     protected array $fillable = [];
+
+    /**
+     * The list of guarded properties (mass assignment).
+     *
+     * @var array
+     */
     protected array $guarded = [];
+
+    /**
+     * The corresponding policy.
+     *
+     * @var Policy|null
+     */
     protected ?Policy $policy;
 
+    /**
+     * The corresponding table name.
+     *
+     * @var string|null
+     */
     public ?string $table = null;
+
+    /**
+     * The pivot model instance.
+     *
+     * @var self
+     */
     public self $pivot;
+
+    /**
+     * The column that has a primary key constraint.
+     *
+     * @var string
+     */
     public string $primaryColumn = 'id';
+
+    /**
+     * The table object.
+     *
+     * @var Table
+     */
     public Table $_table;
+
+    /**
+     * The database instance.
+     *
+     * @var Database
+     */
     protected Database $db;
+
+    /**
+     * Determine that the model should automatically resolve relations
+     * while trying to get non-existing properties.
+     *
+     * @var bool
+     */
     protected bool $shortFetchRelations = true;
 
+    /**
+     * Model constructor.
+     *
+     * @param array|null $data
+     * @throws ModelException
+     */
     public function __construct(?array $data = null)
     {
         if ($data != null)
@@ -80,7 +147,9 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
-     * @throws ModelException
+     * Set an appropriate policy instance.
+     *
+     * @return void
      */
     protected function setPolicy()
     {
@@ -88,16 +157,32 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         $this->policy = class_exists($policy) ? new $policy(auth()->user(), $this) : null;
     }
 
+    /**
+     * Get the database instance.
+     *
+     * @return Database
+     */
     protected function db(): Database
     {
         return $this->db;
     }
 
+    /**
+     * Get the pivot model.
+     *
+     * @return Model
+     */
     public function pivot()
     {
         return $this->pivot;
     }
 
+    /**
+     * Get a field value.
+     *
+     * @param bool $key
+     * @return array|false|mixed
+     */
     public function get($key = true)
     {
         if ($key === true)
@@ -107,6 +192,9 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
+     * Load data on the model.
+     *
+     * @param array $data
      * @throws ModelException
      */
     public function load(array $data)
@@ -120,6 +208,10 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
+     * Get a field value while trying to get non-existing properties.
+     *
+     * @param mixed $name
+     * @return array|mixed|Collection
      * @throws PropertyNotFoundException
      */
     public function __get($name)
@@ -139,11 +231,23 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return $data;
     }
 
+    /**
+     * Set values of the data fields.
+     *
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->data[$name] = $value;
     }
 
+    /**
+     * Determine if a field is fillable.
+     *
+     * @param $field
+     * @return bool
+     */
     public function isFillable($field): bool
     {
         if (in_array($field, $this->fillable) && !in_array($field, $this->guarded)) {
@@ -153,6 +257,12 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return false;
     }
 
+    /**
+     * Determine if a field is guarded.
+     *
+     * @param $field
+     * @return bool
+     */
     public function isGuarded($field): bool
     {
         if (in_array($field, $this->guarded) && !in_array($field, $this->fillable)) {
@@ -162,14 +272,22 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return false;
     }
 
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @return array
+     */
     public function jsonSerialize(): array
     {
         return $this->data;
     }
 
     /**
+     * Find rows by primary key value.
+     *
      * @param $primaryValue
      * @return self|null
+     * @throws \OSN\Framework\Exceptions\CollectionException
      */
     public static function find($primaryValue): ?static
     {
@@ -188,6 +306,9 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
+     * Get all rows.
+     *
+     * @return Collection
      * @throws ModelException
      */
     public static function all(): Collection
@@ -221,8 +342,11 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
      */
 
     /**
+     * Create a record.
+     *
+     * @param array $data
+     * @return Model
      * @throws ModelException
-     * @return Model|Collection
      */
     public static function create(array $data)
     {
@@ -234,7 +358,12 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
+     * Update a record.
+     *
+     * @param array $data
+     * @return Model|static|null
      * @throws ModelException
+     * @throws \OSN\Framework\Exceptions\CollectionException
      */
     public static function update(array $data)
     {
@@ -254,7 +383,11 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
     }
 
     /**
-     * @throws ModelException
+     * Delete a record by primary key values.
+     *
+     * @param int $primaryValue
+     * @return static
+     * @throws \OSN\Framework\Exceptions\CollectionException
      */
     public static function destroy(int $primaryValue): self
     {
@@ -265,6 +398,13 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return $data;
     }
 
+    /**
+     * Determine if the given method name is one if Create-Update-Delete.
+     * This function is called by the __callStatic() method.
+     *
+     * @param $name
+     * @return bool
+     */
     protected static function isCUD($name): bool
     {
         if ($name === 'insert' || $name === 'patch' || $name === 'delete')
@@ -273,16 +413,32 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return false;
     }
 
+    /**
+     * Insert data to the DB.
+     *
+     * @return mixed
+     */
     public function save()
     {
         return $this->insert()->execute();
     }
 
+    /**
+     * Update changes.
+     *
+     * @return mixed
+     */
     public function push()
     {
         return $this->patch()->execute();
     }
 
+    /**
+     * Return a Query instance.
+     *
+     * @param string $sql
+     * @return bool|\PDOStatement|Query|Table
+     */
     public static function query(string $sql = ''): bool|\PDOStatement|Query|Table
     {
         $instance = new static();
@@ -294,46 +450,98 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return $instance->_table;
     }
 
+    /**
+     * Determine if the user can do an action.
+     *
+     * @param string $action
+     * @return bool
+     */
     public function can(string $action): bool
     {
         return $this->policy->can($action);
     }
 
+    /**
+     * Determine if the user cannot do an action.
+     *
+     * @param string $action
+     * @return bool
+     */
     public function cannot(string $action): bool
     {
         return !$this->can($action);
     }
 
+    /**
+     * Retrieve an external iterator
+     *
+     * @return ArrayIterator
+     */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->data);
     }
 
+    /**
+     * Get the count of data fields.
+     *
+     * @return int
+     */
     public function count(): int
     {
         return count($this->data);
     }
 
+    /**
+     * Determine if an offset exists.
+     *
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
 
+    /**
+     * Get the value of an offset.
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
     public function offsetGet($offset): mixed
     {
         return $this->data[$offset];
     }
 
+    /**
+     * Set the value of an offset.
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value): void
     {
         $this->data[$offset] = $value;
     }
 
+    /**
+     * Unset an offset.
+     *
+     * @param mixed $offset
+     */
     public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
 
+    /**
+     * Resolve non-existing method calls using the table instance.
+     *
+     * @param $name
+     * @param $args
+     * @return false|mixed
+     */
     public function __call($name, $args)
     {
         if ($name === 'insert') {
@@ -351,6 +559,13 @@ abstract class Model implements JsonSerializable, IteratorAggregate, Countable, 
         return call_user_func_array([$this->_table, $name], $args);
     }
 
+    /**
+     * Resolve non-existing static method calls using the model instance.
+     *
+     * @param $name
+     * @param $args
+     * @return false|mixed
+     */
     public static function __callStatic($name, $args)
     {
         $obj = new static();

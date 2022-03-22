@@ -17,11 +17,26 @@
 
 namespace OSN\Framework\Core;
 
-
+/**
+ * Loads the initializers step-by-step.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 trait Initializable
 {
+    /**
+     * The initializers list.
+     *
+     * @var array
+     */
     protected array $initializers = [];
 
+    /**
+     * Load all initializers from the config.
+     *
+     * @return void
+     */
     public function loadInitializers()
     {
         foreach (config('initializers') as $value) {
@@ -29,6 +44,11 @@ trait Initializable
         }
     }
 
+    /**
+     * Run preinit() method of all initializers.
+     *
+     * @return void
+     */
     public function preinit()
     {
         foreach ($this->initializers as $initializer) {
@@ -42,6 +62,11 @@ trait Initializable
         }
     }
 
+    /**
+     * Run init() method of all initializers.
+     *
+     * @return void
+     */
     public function init()
     {
         foreach ($this->initializers as $initializer) {
@@ -55,6 +80,11 @@ trait Initializable
         }
     }
 
+    /**
+     * Run afterinit() method of all initializers.
+     *
+     * @return void
+     */
     public function afterinit()
     {
         foreach ($this->initializers as $initializer) {

@@ -19,6 +19,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class FileNotFoundException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class FileNotFoundException extends Exception
 {
     protected $code = -1;

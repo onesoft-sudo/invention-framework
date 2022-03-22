@@ -20,6 +20,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class DatabaseException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class DatabaseException extends Exception
 {
     protected $code = 6;

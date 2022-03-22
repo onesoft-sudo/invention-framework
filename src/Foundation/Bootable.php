@@ -18,13 +18,21 @@
 namespace OSN\Framework\Foundation;
 
 /**
- * Trait Bootable
+ * This trait can be used to allow the user to construct an object that extends
+ * from another class without overriding the __construct() method.
  *
  * @package OSN\Framework\Foundation
  * @author Ar Rakin <rakinar2@gmail.com>
  */
 trait Bootable
 {
+    /**
+     * The bootstrapper method. This method must be called from the base class
+     * constructor.
+     *
+     * @return void
+     * @throws \ReflectionException
+     */
     protected function bootUp()
     {
         if (method_exists(static::class, 'boot'))

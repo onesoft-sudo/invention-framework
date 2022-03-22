@@ -20,6 +20,12 @@ namespace OSN\Framework\Exceptions;
 
 use Exception;
 
+/**
+ * Class EventException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class EventException extends Exception
 {
     protected $code = -2;

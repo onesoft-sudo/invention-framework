@@ -22,22 +22,62 @@ use OSN\Framework\Database\Schema;
 use OSN\Framework\Database\MySQL\Blueprint;
 use OSN\Framework\Foundation\Bootable;
 
+/**
+ * The base Migration class.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 abstract class Migration
 {
     use Bootable;
 
+    /**
+     * The name of the migration.
+     *
+     * @var string
+     */
     protected string $migrationName;
+
+    /**
+     * Determines if the framework should save this
+     * migration stats into the database.
+     *
+     * @var bool
+     */
     protected bool $entryLogging = true;
 
+    /**
+     * Change the database.
+     *
+     * @return mixed
+     */
     abstract public function safeUp();
+
+    /**
+     * Revert the database.
+     *
+     * @return mixed
+     */
     abstract public function safeDown();
 
+    /**
+     * Migration constructor
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->migrationName = get_class($this);
         $this->bootUp();
     }
 
+    /**
+     * Save this migration as "Applied" into the database.
+     *
+     * @param $pdo
+     * @return void
+     */
     public function registerMigration($pdo)
     {
         $timestamp = date("Y-m-d H:i:s");
@@ -46,6 +86,12 @@ abstract class Migration
         $stmt->execute(["name" => $this->migrationName, "created_at" => $timestamp]);
     }
 
+    /**
+     * Delete this migration logging from database.
+     *
+     * @param $pdo
+     * @return void
+     */
     public function unregisterMigration($pdo)
     {
         $stmt = $pdo->prepare("DELETE FROM migrations WHERE name = :name");
@@ -53,6 +99,8 @@ abstract class Migration
     }
 
     /**
+     * Determine if the current migration is applied.
+     *
      * @param $db
      * @return bool
      * @todo Update code
@@ -81,6 +129,12 @@ abstract class Migration
         return false;
     }
 
+    /**
+     * Run the migration.
+     *
+     * @param $db
+     * @return bool
+     */
     public function up($db): bool
     {
         if (!$this->isApplied($db)){
@@ -95,6 +149,12 @@ abstract class Migration
         return false;
     }
 
+    /**
+     * Revert the migration.
+     *
+     * @param $db
+     * @return bool
+     */
     public function down($db): bool
     {
         if ($this->isApplied($db)) {

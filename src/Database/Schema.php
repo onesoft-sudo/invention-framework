@@ -26,8 +26,9 @@ use OSN\Framework\Database\SQLite\Blueprint as SQLiteBlueprint;
 use OSN\Framework\Facades\_String;
 
 /**
- * Class Schema
- * @package App\Console
+ * The table schema manager class
+ *
+ * @package OSN\Framework\Database
  * @todo Add createIfNotExists() method
  */
 class Schema

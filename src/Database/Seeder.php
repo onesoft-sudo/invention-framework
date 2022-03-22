@@ -22,28 +22,52 @@ use OSN\Framework\Core\Database;
 use OSN\Framework\Foundation\Bootable;
 use OSN\Invention\CLI\Console\DB\SeedCommand;
 
+/**
+ * The database seeder base class
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 abstract class Seeder
 {
     use Bootable;
 
+    /**
+     * The database component instance.
+     *
+     * @var Database
+     */
     protected Database $db;
 
+    /**
+     * Execute the seeder.
+     *
+     * @param Database $db
+     * @return mixed
+     */
     abstract public function execute(Database $db);
 
-    /**
-     * Seeder constructor.
-     */
     public function __construct()
     {
         $this->db = db();
         $this->bootUp();
     }
 
+    /**
+     * Run the seeder.
+     *
+     * @return mixed
+     */
     public function seed()
     {
         return $this->execute($this->db);
     }
 
+    /**
+     * Call external seeders. This allows the user to control the seeding order.
+     *
+     * @param array $seeders
+     */
     protected function call(array $seeders)
     {
         foreach ($seeders as $seeder) {

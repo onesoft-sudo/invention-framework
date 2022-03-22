@@ -18,13 +18,47 @@
 namespace OSN\Framework\Http;
 
 
+/**
+ * Trait ResponseTrait
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 trait ResponseTrait
 {
+    /**
+     * The response body.
+     *
+     * @var string|null
+     */
     protected ?string $response;
+
+    /**
+     * Response status code.
+     *
+     * @var int
+     */
     protected $code;
+
+    /**
+     * The response headers.
+     *
+     * @var array|null
+     */
     public ?array $headers = [];
+
+    /**
+     * The response status text.
+     *
+     * @var string
+     */
     protected string $statusText;
 
+    /**
+     * An array of all valid HTTP status codes.
+     *
+     * @var array|string[]
+     */
     protected static array $responseCodes = [
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -86,12 +120,19 @@ trait ResponseTrait
         511 => 'Network Authentication Required',
     ];
 
+    /**
+     * Get response body.
+     *
+     * @return string
+     */
     public function getContent(): string
     {
         return $this->response === null ? '' : $this->response;
     }
 
     /**
+     * Set the response content.
+     *
      * @param string|null $response
      */
     public function setContent(?string $response): void
@@ -99,12 +140,19 @@ trait ResponseTrait
         $this->response = $response;
     }
 
+    /**
+     * Get the status text.
+     *
+     * @return string
+     */
     public function getStatusText(): string
     {
         return $this->statusText;
     }
 
     /**
+     * Set the status text.
+     *
      * @param string $statusText
      */
     public function setStatusText(string $statusText): void
@@ -112,28 +160,51 @@ trait ResponseTrait
         $this->statusText = $statusText;
     }
 
+    /**
+     * Get the status code.
+     *
+     * @return int
+     */
     public function getCode(): int
     {
         return $this->code;
     }
 
+    /**
+     * Set the status code.
+     *
+     * @param int $code
+     */
     public function setCode(int $code = 200)
     {
         $this->code = $code;
         $this->setStatusFromCode($code);
     }
 
+    /**
+     * Get the appropriate status from the given code.
+     *
+     * @param int $code
+     * @return mixed|string
+     */
     public static function getStatusFromCode(int $code)
     {
         return static::$responseCodes[$code] ?? 'Unknown Status Code';
     }
 
+    /**
+     * Set status text from the given code.
+     *
+     * @param int $code
+     */
     public function setStatusFromCode(int $code)
     {
         $this->setStatusText(static::getStatusFromCode($code));
     }
 
     /**
+     * Set response headers.
+     *
      * @param array $headers
      */
     public function setHeaders(array $headers): void
@@ -142,6 +213,8 @@ trait ResponseTrait
     }
 
     /**
+     * Set headers by merging the defaults and custom headers.
+     *
      * @param array $custom_headers
      */
     public function setHeadersParsed(array $custom_headers = []): void
@@ -162,6 +235,13 @@ trait ResponseTrait
         $this->headers = $headers_array;
     }
 
+    /**
+     * Getter and setter for headers.
+     *
+     * @param $key
+     * @param null $value
+     * @return mixed|null
+     */
     public function header($key, $value = null)
     {
         if ($value === null) {

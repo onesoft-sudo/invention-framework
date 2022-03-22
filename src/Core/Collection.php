@@ -27,31 +27,42 @@ use JsonSerializable;
 use OSN\Framework\Exceptions\CollectionException;
 use Traversable;
 
+/**
+ * Class Collection
+ * This is an implementation of array-like object with various useful methods.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Countable
 {
     use CollectionArrayMethods;
 
+    /**
+     * The raw array.
+     *
+     * @var array
+     */
     protected array $array;
 
     /**
      * Collection constructor.
+     *
      * @param array $array
      */
     public function __construct(array $array)
     {
-        $newArray = [];
-
-        foreach ($array as $key => $value) {
-            $newArray[$key] = $value;
-        }
-
-        $this->array = $newArray;
+        $this->array = $array;
     }
 
     /**
+     * Get the value of an offset/key.
+     *
+     * @param null $index
+     * @return mixed
      * @throws CollectionException
      */
-    public function get($index = null)
+    public function get($index = null): mixed
     {
         if ($index === null) {
             return $this->array;
@@ -64,11 +75,25 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
         return $this->array[$index];
     }
 
-    public function _($index)
+    /**
+     * A wrapper for $this->get()
+     *
+     * @param $index
+     * @return mixed
+     * @throws CollectionException
+     */
+    public function _($index): mixed
     {
         return $this->get($index);
     }
 
+    /**
+     * Return the value of the given array offset.
+     *
+     * @param $key
+     * @return mixed
+     * @throws CollectionException
+     */
     public function __get($key)
     {
         $index = $key;
@@ -79,6 +104,12 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
         return $this->_($index);
     }
 
+    /**
+     * Set the value of an array offset.
+     *
+     * @param $key
+     * @param $value
+     */
     public function __set($key, $value)
     {
         $index = $key;
@@ -89,21 +120,43 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
         $this->array[$key] = $value;
     }
 
+    /**
+     * Set the value of an array offset.
+     *
+     * @param $key
+     * @param $value
+     */
     public function set($key, $value)
     {
         $this->__set($key, $value);
     }
 
+    /**
+     * Specify data which should be serialized to JSON.
+     *
+     * @return array
+     */
     public function jsonSerialize(): array
     {
        return $this->array;
     }
 
+    /**
+     * When invoked, just return the raw array.
+     *
+     * @return array
+     */
     public function __invoke(): array
     {
         return $this->array;
     }
 
+    /**
+     * Check if the array has the given key.
+     *
+     * @param $key
+     * @return bool
+     */
     public function has($key): bool
     {
         try {
@@ -115,6 +168,14 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
         }
     }
 
+    /**
+     * Check if the array has the given key, and if it has,
+     * then return the value of the key.
+     *
+     * @param $key
+     * @return mixed|null
+     * @throws CollectionException
+     */
     public function hasGet($key)
     {
         if ($this->has($key)) {
@@ -125,6 +186,8 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
     }
 
     /**
+     * Determine if an offset exists.
+     *
      * @param mixed $offset
      * @return bool
      */
@@ -135,6 +198,8 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
     }
 
     /**
+     * Get the value of an offset.
+     *
      * @param mixed $offset
      * @return mixed
      */
@@ -145,6 +210,8 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
     }
 
     /**
+     * Set the given value to the offset.
+     *
      * @param mixed $offset
      * @param mixed $value
      */
@@ -155,6 +222,8 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
     }
 
     /**
+     * Unset an offset.
+     *
      * @param mixed $offset
      */
     #[\ReturnTypeWillChange]
@@ -163,16 +232,11 @@ class Collection implements JsonSerializable, ArrayAccess, IteratorAggregate, Co
         unset($this->array[$offset]);
     }
 
-    public function diff(Collection $newUsers)
-    {
-        return array_diff($this->array, $newUsers->array);
-    }
-
-    public function udiff(Collection $newUsers, \Closure $callback)
-    {
-        return array_udiff($this->array, $newUsers->array, $callback);
-    }
-
+    /**
+     * Retrieve an external iterator
+     *
+     * @return \ArrayIterator
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->array);

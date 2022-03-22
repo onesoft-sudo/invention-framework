@@ -4,11 +4,12 @@
 - Implement factories
 - Fix models
 - Add command-line support
-+ Implement seeders
-+ Fix commands
-+ Update session flash strategy
-+ Add proper docblock comments
+- Implement seeders
+- Fix commands
+- Update session flash strategy
 ------------------------------------------------------
++ Add proper docblock comments
++ Implement Error Handling
 + Implement ORM
 + Fix Commands
 + Add support for `Accept: application/json` and `Accept: application/xml`

@@ -17,13 +17,30 @@
 
 namespace OSN\Framework\Http;
 
-
+/**
+ * The HTTP response.
+ *
+ * @package OSN\Framework\Http
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Response
 {
     use ResponseTrait;
 
+    /**
+     * The HTTP version.
+     *
+     * @var string
+     */
     protected string $httpVersion = '1.1';
 
+    /**
+     * Response constructor.
+     *
+     * @param string|null $response
+     * @param int $code
+     * @param array $headers
+     */
     public function __construct(?string $response = null, int $code = 200, array $headers = [])
     {
         $this->setContent($response);
@@ -32,6 +49,11 @@ class Response
         $this->setHeadersParsed($headers);
     }
 
+    /**
+     * Set the response data.
+     *
+     * @return void
+     */
     protected function setData()
     {
         @header("HTTP/{$this->httpVersion} {$this->getCode()} {$this->getStatusText()}");
@@ -40,17 +62,32 @@ class Response
         }
     }
 
+    /**
+     * When attempted to convert to a string, set the response data and return
+     * the response body.
+     *
+     * @return string
+     * @throws \OSN\Framework\Exceptions\EventException
+     */
     public function __toString()
     {
         $this->setData();
 
-        if ($this->getCode() > 299 && $this->getCode() < 400) {
+        if ($this->getCode() > 299 && $this->getCode() < 400 && server('APP_ENV') != 'testing') {
+            app()->dispatch('AppRunningComplete', [app()]);
             exit();
         }
 
         return $this->getContent();
     }
 
+    /**
+     * When attempted to call the object, set the response data and return
+     * the response body.
+     *
+     * @return string
+     * @throws \OSN\Framework\Exceptions\EventException
+     */
     public function __invoke(): string
     {
         $this->setData();
@@ -63,6 +100,13 @@ class Response
         return $this->getContent();
     }
 
+    /**
+     * Send a redirect response.
+     *
+     * @param $url
+     * @param int $code
+     * @return $this
+     */
     public function redirect($url, int $code = 302): self
     {
         $this->setCode($code);
@@ -70,6 +114,13 @@ class Response
         return $this;
     }
 
+    /**
+     * Redirect the user immediately and stop code execution.
+     *
+     * @param $header
+     * @param int $code
+     * @throws \OSN\Framework\Exceptions\EventException
+     */
     public function redirectImmediately($header, $code = 302)
     {
         $text = $this->getStatusFromCode($code);

@@ -18,8 +18,22 @@
 namespace OSN\Framework\Database;
 
 
+/**
+ * This trait is used in some places, to resolve non-existing methods from the
+ * internal query instance.
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 trait UniversalQueryBuilderTrait
 {
+    /**
+     * If the method doesn't exist, then attempt to call the method into the query instance.
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return $this
+     */
     public function __call($name, $arguments)
     {
         if (method_exists($this->query, $name)) {

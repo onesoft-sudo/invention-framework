@@ -17,6 +17,12 @@
 
 namespace OSN\Framework\Exceptions;
 
+/**
+ * Class MethodNotFoundException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class MethodNotFoundException extends \Exception
 {
     protected $code = 1;

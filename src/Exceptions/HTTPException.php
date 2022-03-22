@@ -22,11 +22,36 @@ use OSN\Framework\Http\ResponseTrait;
 use OSN\Framework\Http\Status;
 use Throwable;
 
+/**
+ * Class HTTPException
+ *
+ * @package OSN\Framework\Exceptions
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class HTTPException extends Exception
 {
+    /**
+     * The HTTP status code.
+     *
+     * @var int
+     */
     protected $code = 500;
+
+    /**
+     * The headers that needs to be sent while this exception is handled.
+     *
+     * @var array
+     */
     protected array $headers;
 
+    /**
+     * HTTPException constructor.
+     *
+     * @param int $code
+     * @param string $message
+     * @param array $headers
+     * @param Throwable|null $previous
+     */
     public function __construct($code = 500, $message = 'Internal Server Error', array $headers = [], Throwable $previous = null)
     {
         $status = new Status($code);
@@ -36,6 +61,8 @@ class HTTPException extends Exception
     }
 
     /**
+     * Get the headers.
+     *
      * @return array
      */
     public function getHeaders(): array

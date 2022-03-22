@@ -22,14 +22,49 @@ use OSN\Framework\Database\DatabaseVendors;
 use OSN\Framework\Database\Table;
 use PDO;
 
+/**
+ * The database connection manager. It uses PDO internally to
+ * interact with the database.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Database
 {
+    /**
+     * The PDO instance.
+     *
+     * @var PDO|null
+     */
     public ?PDO $pdo;
+
+    /**
+     * The DSN string.
+     *
+     * @var string
+     */
     public string $dsn;
+
+    /**
+     * The database name.
+     *
+     * @var string
+     */
     public string $dbname;
+
+    /**
+     * The environment variables.
+     *
+     * @var array
+     */
     public array $env;
 
-    public function __construct($env)
+    /**
+     * Database constructor.
+     *
+     * @param array $env
+     */
+    public function __construct(array $env)
     {
         $this->env = $env;
 
@@ -46,6 +81,14 @@ class Database
         $this->init($env, $vendor, $dsn);
     }
 
+    /**
+     * Initialize the PDO instance.
+     *
+     * @param $env
+     * @param $vendor
+     * @param $dsn
+     * @todo Remove magic strings
+     */
     public function init($env, $vendor, $dsn)
     {
         if ($vendor === 'mysql' || $vendor === 'mariadb') {
@@ -63,6 +106,11 @@ class Database
         $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Get vendor names.
+     *
+     * @return string|null
+     */
     public function getVendor(): ?string
     {
         if (in_array($this->env['DB_VENDOR'], DatabaseVendors::$vendors)) {
@@ -72,6 +120,12 @@ class Database
         return null;
     }
 
+    /**
+     * Choose one of multiple queries according to the database vendor.
+     *
+     * @param array $queries
+     * @return mixed
+     */
     public function chooseQuery(array $queries)
     {
         if (array_key_exists(DatabaseVendors::$vendors['mysql'], $queries)) {
@@ -87,27 +141,57 @@ class Database
         }
     }
 
+    /**
+     * Run a raw SQL query.
+     *
+     * @param $sql
+     * @return false|\PDOStatement
+     */
     public function query($sql)
     {
         return $this->pdo->query($sql);
     }
 
+    /**
+     * An alias of PDO::exec().
+     *
+     * @param $sql
+     * @return false|int
+     */
     public function exec($sql)
     {
         return $this->pdo->exec($sql);
     }
 
+    /**
+     * Run raw query and fetch result.
+     *
+     * @param $sql
+     * @param null $params
+     * @return array
+     */
     public function queryFetch($sql, $params = null): array
     {
         return $this->pdo->query($sql)->fetchAll($params !== null ? $params : PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Prepare an SQL statement.
+     *
+     * @param $sql
+     * @return false|\PDOStatement
+     */
     public function prepare($sql)
     {
         return $this->pdo->prepare($sql);
     }
 
-    public function tables()
+    /**
+     * Get all tables list available in the current database.
+     *
+     * @return array
+     */
+    public function tables(): array
     {
         $tables = $this->queryFetch($this->chooseQuery([
             "mysql" => "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()",
@@ -117,11 +201,22 @@ class Database
         return $tables[0];
     }
 
+    /**
+     * Get a specific table.
+     *
+     * @param string $table
+     * @return Table
+     */
     public function table(string $table): Table
     {
         return new Table($table);
     }
 
+    /**
+     * Destruct the object and close PDO connection.
+     *
+     * @return void
+     */
     public function __destruct()
     {
         $this->pdo = null;

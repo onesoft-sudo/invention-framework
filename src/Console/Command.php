@@ -17,7 +17,13 @@
 
 namespace OSN\Framework\Console;
 
-
+/**
+ * Class Command
+ *
+ * @package OSN\Framework\Console
+ * @author Ar Rakin <rakinar2@gmail.com>
+ * @experimental
+ */
 class Command extends \Symfony\Component\Console\Command\Command
 {
     /**

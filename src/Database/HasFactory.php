@@ -18,32 +18,55 @@
 namespace OSN\Framework\Database;
 
 
-use OSN\Framework\Facades\File;
-
+/**
+ * Add connection between the factories and the models.
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 trait HasFactory
 {
+    /**
+     * The corresponding factory class.
+     *
+     * @var string|null
+     */
     protected static ?string $factory = null;
 
+    /**
+     * Set the factory according the model name or the user input.
+     *
+     * @param string|null $factory
+     */
     public static function setFactory(?string $factory = null)
     {
         if ($factory === null) {
-            $array = explode('\\', self::class);
+            $array = explode('\\', static::class);
             $modelName = trim(end($array));
             $factoryName = "Database\\Factories\\" . $modelName . 'Factory';
 
             if (!class_exists($factoryName))
                 return;
 
-            self::$factory = $factoryName;
+            static::$factory = $factoryName;
         }
         else {
-            self::$factory = $factory;
+            static::$factory = $factory;
         }
     }
 
+    /**
+     * Get the factory instance.
+     *
+     * @return Factory
+     * @todo Create factory instance only once
+     */
     public static function factory(): Factory
     {
-        self::setFactory();
-        return new self::$factory();
+        if (static::$factory === null) {
+            static::setFactory();
+        }
+
+        return new static::$factory();
     }
 }

@@ -21,19 +21,48 @@ namespace OSN\Framework\Core;
 use Closure;
 use OSN\Framework\Http\Request;
 
+/**
+ * The base HTTP middleware class.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 abstract class Middleware
 {
+    /**
+     * Determine if the middleware is disabled.
+     *
+     * @var bool
+     */
     protected static bool $disabled = false;
 
+    /**
+     * Handle the incoming request.
+     *
+     * @param Request $request
+     * @return mixed
+     */
     abstract public function handle(Request $request);
 
+    /**
+     * Execute the middleware.
+     *
+     * @param Request $request
+     * @return mixed|null
+     */
     public function execute(Request $request)
     {
         if (!static::$disabled)
             return $this->handle($request);
+
         return null;
     }
 
+    /**
+     * Disable the middleware.
+     *
+     * @return void
+     */
     public static function disable()
     {
         static::$disabled = false;

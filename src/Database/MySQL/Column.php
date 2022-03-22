@@ -19,8 +19,19 @@ namespace OSN\Framework\Database\MySQL;
 
 use \OSN\Framework\Database\Common\Column as CommonColumn;
 
+/**
+ * Column class for using with MySQL.
+ *
+ * @package OSN\Framework\Database\MySQL
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Column extends CommonColumn
 {
+    /**
+     * Append AUTO_INCREMENT
+     *
+     * @return $this
+     */
     public function autoIncrement(): self
     {
         return $this->append(" AUTO_INCREMENT", false);

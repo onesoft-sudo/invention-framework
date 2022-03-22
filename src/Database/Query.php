@@ -17,11 +17,22 @@
 
 namespace OSN\Framework\Database;
 
-
+/**
+ * The database query class.
+ *
+ * @package OSN\Framework\Database
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class Query
 {
     use QueryBuilderTrait;
 
+    /**
+     * Query constructor.
+     *
+     * @param string $currentTable
+     * @param string $model
+     */
     public function __construct(string $currentTable = '', string $model = '')
     {
         $this->db = db();
@@ -29,16 +40,34 @@ class Query
         $this->model = $model;
     }
 
+    /**
+     * Convert the object to string.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return $this->getQuery();
     }
 
+    /**
+     * Run a raw query.
+     *
+     * @param string $sql
+     * @return bool|\PDOStatement
+     */
     public function raw(string $sql): bool|\PDOStatement
     {
         return $this->db->query($sql);
     }
 
+    /**
+     * Run a raw query and fetch result.
+     *
+     * @param string $sql
+     * @param int $flags
+     * @return array
+     */
     public function rawFetch(string $sql, int $flags = \PDO::FETCH_ASSOC): array
     {
         return $this->raw($sql)->fetchAll($flags);

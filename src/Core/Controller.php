@@ -21,14 +21,37 @@ namespace OSN\Framework\Core;
 use OSN\Framework\View\Layout;
 use OSN\Framework\View\View;
 
+/**
+ * The HTTP Controller.
+ *
+ * @package OSN\Framework\Core
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 abstract class Controller
 {
     /**
-     * @var Middleware[] $middlewares
+     * Corresponding middleware.
+     *
+     * @var Middleware[]
      */
     protected array $middlewares = [];
+
+    /**
+     * The methods/actions that are under the middleware.
+     *
+     * @var array
+     */
     protected array $middlewareMethods = [];
 
+    /**
+     * Render a view.
+     *
+     * @param $view
+     * @param array $data
+     * @param string $layout
+     * @return View
+     * @throws \OSN\Framework\Exceptions\FileNotFoundException
+     */
     public function render($view, array $data = [], $layout = ''): View
     {
         if ($view instanceof View) {
@@ -38,6 +61,11 @@ abstract class Controller
         return new View($view, $data, $layout);
     }
 
+    /**
+     * Set a custom layout.
+     *
+     * @param $layout
+     */
     protected function setLayout($layout)
     {
         if ($layout instanceof Layout) {
@@ -51,7 +79,10 @@ abstract class Controller
     }
 
     /**
+     * Set middleware for this controller.
+     *
      * @param Middleware[]|string[] $middlewares
+     * @param array $methods
      */
     protected function setMiddleware(array $middlewares, array $methods = [])
     {
@@ -65,21 +96,41 @@ abstract class Controller
         $this->middlewareMethods = $methods;
     }
 
+    /**
+     * Get method names that are under the middleware.
+     *
+     * @return array
+     */
     public function getMiddlewareMethods(): array
     {
         return $this->middlewareMethods;
     }
 
+    /**
+     * Get all middleware of this controller.
+     *
+     * @return Middleware[]
+     */
     public function getMiddleware(): array
     {
         return $this->middlewares;
     }
 
+    /**
+     * Get the DB component.
+     *
+     * @return Database
+     */
     protected function db(): Database
     {
         return App::$app->db;
     }
 
+    /**
+     * Get the session component.
+     *
+     * @return Session
+     */
     protected function session(): Session
     {
         return App::$app->session();

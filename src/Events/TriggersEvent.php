@@ -20,8 +20,22 @@ namespace OSN\Framework\Events;
 
 use OSN\Framework\Exceptions\EventException;
 
+/**
+ * This trait adds a public on() method which allows the user to
+ * add event listeners on that object.
+ *
+ * @package OSN\Framework\Events
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 trait TriggersEvent
 {
+    /**
+     * Convert short event names to full class name.
+     *
+     * @param string $event
+     * @return string
+     * @throws EventException
+     */
     public static function eventToClass(string $event): string
     {
         if (!class_exists($event))
@@ -34,11 +48,26 @@ trait TriggersEvent
         return $event;
     }
 
+    /**
+     * Register an event handler.
+     *
+     * @param string $event
+     * @param $callable
+     * @throws EventException
+     */
     public static function on(string $event, $callable)
     {
         static::eventToClass($event)::addHandler($callable);
     }
 
+    /**
+     * Dispatch an event.
+     *
+     * @param string $event
+     * @param array $args
+     * @return mixed
+     * @throws EventException
+     */
     public static function dispatch(string $event, array $args = [])
     {
         return static::eventToClass($event)::fire($args);

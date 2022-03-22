@@ -20,13 +20,26 @@ namespace OSN\Framework\Events\BuiltIn;
 use OSN\Framework\Events\Event;
 use OSN\Framework\Foundation\App;
 
+/**
+ * An built-in event, which gets triggered when app execution is complete.
+ *
+ * @package OSN\Framework\Events\BuiltIn
+ * @author Ar Rakin <rakinar2@gmail.com>
+ */
 class AppRunCompleteEvent extends Event
 {
     /**
+     * The current application.
+     *
      * @var App
      */
     public App $app;
 
+    /**
+     * AppRunCompleteEvent constructor.
+     *
+     * @param array $data
+     */
     public function __construct(array $data = [])
     {
         parent::__construct($data);
