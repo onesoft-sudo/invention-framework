@@ -18,72 +18,32 @@
 namespace OSN\Framework\View;
 
 
-use OSN\Framework\Core\App;
-use OSN\Framework\Exceptions\FileNotFoundException;
-use OSN\Framework\PowerParser\PowerParser;
+use OSN\Framework\DataTypes\_String;
+use OSN\Framework\PowerParser\HTMLAttributes;
 
-class Component
+abstract class Component implements \OSN\Framework\Contracts\Component
 {
-    protected string $name;
-    protected array $_args = [];
+    private array $attributes = [];
 
-    /**
-     * Layout constructor.
-     */
-    public function __construct(string $name, array $conf = [])
+    public final function __construct(array $data)
     {
-        $this->name = str_replace('.', '/', $name);
-        $this->_args = $conf['args'] ?? [];
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    public function getContents()
-    {
-        $file = App::$app->config["root_dir"] . "/resources/views/components/" . $this->name . ".php";
-
-        if (!is_file($file)) {
-            $isPower = true;
-            $file = App::$app->config["root_dir"] . "/resources/views/components/" . $this->name . ".power.php";
-        }
-
-        if (!is_file($file)) {
-            throw new FileNotFoundException("Couldn't find the specified component '{$this->name}': No such file or directory");
-        }
-
-        if(isset($isPower)) {
-            $power = new PowerParser($file);
-            $file = ($power)()['file'];
-        }
-
-        $_component_args = $this->_args;
-
-        ob_start();
-        include $file;
-        $out = ob_get_clean();
-
-        return $out;
-    }
-
-    public static function init(string $name, ...$args)
-    {
-        $comp = new static($name, ['args' => $args]);
-        return $comp->getContents();
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function __invoke()
-    {
-        return $this->getContents();
+        $this->attributes = $data;
+        call_user_func_array([$this, 'boot'], array_values($data));
     }
 
     public function __toString()
     {
-        return $this->getContents();
+        return $this->render() . '';
+    }
+
+    protected function view(string $view, array $data = [], $layout = ''): View
+    {
+        $data = array_merge($this->dataArray(), $data, ['__attributes' => new HTMLAttributes($this->attributes)]);
+        return view($view, $data, $layout);
+    }
+
+    protected function dataArray(): array
+    {
+        return (array) $this;
     }
 }

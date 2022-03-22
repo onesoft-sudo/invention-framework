@@ -18,7 +18,9 @@
 namespace OSN\Framework\PowerParser;
 
 
+use OSN\Framework\Contracts\Component;
 use OSN\Framework\Core\App;
+use OSN\Framework\DataTypes\_String;
 
 class PowerParser
 {
@@ -177,7 +179,7 @@ class PowerParser
         /**
          * :csrf statement.
          */
-        $output = preg_replace('/:csrf:/', $this->php('echo \OSN\Framework\View\Component::init("csrf");'), $output);
+        $output = preg_replace('/:csrf:/', '<input type="hidden" name="__csrf_token" value="<?= csrf_token() ?>">', $output);
 
         /**
          * method statement.
@@ -197,25 +199,59 @@ class PowerParser
 
         $output = preg_replace("/:enderror:/", $this->php("unset(\$_error_field);\nunset(\$_error_current); \n}\n"), $output);
 
-        /**
-         * component statement.
+        /*
+         * Component tag rendering.
          */
-        $regex = ":component\([^\r\n].*?[^\r\n]\):";
-        if (preg_match_all("/$regex/", $output, $matches)) {
-            foreach ($matches[0] as $match) {
-                $m = preg_replace('/:component\(|\):/', '', $match);
-                $output = str_replace($match, $this->php('echo \OSN\Framework\View\Component::init('.$m.');'), $output);
+        $regex = "< *c-([a-z0-9-\.]+)( *([\n ]+[a-zA-Z0-9-_:\.@]+\=[\"](.*?)[\"])+)? *(\/)? *>";
+
+        if (preg_match_all("/$regex/m", $output, $matches)) {
+            foreach ($matches[1] as $i => $match) {
+                preg_match_all("/([A-Za-z0-9-_:\.@]+)\=[\"](.*?)([\"])/", trim($matches[2][$i]), $matches2);
+                $attributes = '';
+
+                foreach ($matches2[0] as $k => $v) {
+                    $bind = isset($matches2[1][$k][0]) && $matches2[1][$k][0] == ':';
+
+                    if ($bind && $matches2[2][$k] == '') {
+                        $attributes .= "\"" . substr($matches2[1][$k], 1) . "\" => null,";
+                        continue;
+                    }
+
+                    $attributes .= preg_replace("/:?([A-Za-z0-9-_:\.@]+)\=[\"](.*?)[\"]/", "\"" . ($bind ? substr($matches2[1][$k], 1) : "$1") . "\" => " . ($bind ? '$2' : "\"\$2\"") . ",", $v);
+                }
+
+                $attributes = "[$attributes]";
+
+                $output = str_replace($matches[0][$i], $this->php("echo \\OSN\\Framework\\PowerParser\\PowerParser::renderComponent('$match', " . ($attributes) . ");"), $output);
             }
         }
 
         return $output;
     }
 
+    /**
+     * Render a component.
+     *
+     * @param string $htmlTag
+     * @param array $attributes
+     * @return Component
+     */
+    public static function renderComponent(string $htmlTag, array $attributes)
+    {
+        $class = "\\App\\ViewComponents\\" . _String::from($htmlTag)->slug2className()->replace('/\./', "\\");
+        return new $class($attributes);
+    }
+
+    protected function eval($code)
+    {
+        return eval($code);
+    }
+
     public function parse(string $code): string
     {
-        $replacements = $this->replacements();
         $output = $code;
         $output = $this->replaceDirectivesWithPHPCode($output);
+        $replacements = $this->replacements();
 
         foreach ($replacements as $str => $replacement) {
             $output = preg_replace("/$str/", $replacement, $output);

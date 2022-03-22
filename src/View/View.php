@@ -33,6 +33,7 @@ class View
 
     /**
      * View constructor.
+     *
      * @throws FileNotFoundException
      */
     public function __construct(string $name, $data = [], $layout = '')
@@ -65,7 +66,7 @@ class View
 
         $view = $this->renderView($_names, $_sections, $_names_modified, $_layout);
 
-        if ($this->layout === false || $this->layout === null)
+        if ($_layout === false || $_layout === null)
              return $view;
 
         $layout = $_layout === null ? '[[ view ]]' : (new Layout($_layout, $this->title, [
