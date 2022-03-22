@@ -117,15 +117,15 @@ class Response
     /**
      * Redirect the user immediately and stop code execution.
      *
-     * @param $header
+     * @param $url
      * @param int $code
      * @throws \OSN\Framework\Exceptions\EventException
      */
-    public function redirectImmediately($header, $code = 302)
+    public function redirectImmediately($url, $code = 302)
     {
         $text = $this->getStatusFromCode($code);
         header("HTTP/{$this->httpVersion} $code $text");
-        header("Location: $header");
+        header("Location: $url");
         app()->dispatch('AppRunningComplete', [app()]);
         exit();
     }

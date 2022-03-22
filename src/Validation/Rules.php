@@ -86,7 +86,7 @@ trait Rules
     }
 
     /**
-     * Validate that a numeric value is larger than the given value.
+     * Validate that a value length is larger than the given value.
      *
      * @param $data
      * @param $field
@@ -96,11 +96,11 @@ trait Rules
     #[\Pure]
     protected function ruleMin($data, $field, int|float $min): bool
     {
-        return $this->ruleNumber($data) && $data > $min;
+        return strlen($data) >= $min;
     }
 
     /**
-     * Validate that a numeric value is less than the given value.
+     * Validate that a value length is less than the given value.
      *
      * @param $data
      * @param $field
@@ -110,7 +110,7 @@ trait Rules
     #[\Pure]
     protected function ruleMax($data, $field, int|float $max): bool
     {
-        return $this->ruleNumber($data) && $data < $max;
+        return strlen($data) <= $max;
     }
 
     /**
