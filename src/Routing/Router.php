@@ -27,6 +27,7 @@ use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
 use OSN\Framework\Facades\Response as ResponseFacade;
+use OSN\Framework\Validation\FormRequest;
 use OSN\Framework\View\View;
 use stdClass;
 
@@ -221,6 +222,19 @@ class Router
 
                     if (!$param) {
                         throw new HTTPException(404, "Not Found");
+                    }
+                }
+
+                if ($param instanceof FormRequest) {
+                    /** @var FormRequest $param */
+                    $param = new $param($this->request->all());
+
+                    if (!$param->authorize())
+                        abort(403);
+
+                    if (method_exists($param, 'handleInvalid')) {
+                        if (!$param->validate())
+                            return $param->handleInvalid() ?? '';
                     }
                 }
             }

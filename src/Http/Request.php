@@ -270,7 +270,7 @@ class Request implements Arrayable
      * Get a request header.
      *
      * @param $key
-     * @return false
+     * @return string|false
      */
     public function header($key)
     {
@@ -477,5 +477,19 @@ class Request implements Arrayable
     public function sanitized(): array
     {
         return $this->validator?->sanitized();
+    }
+
+    public function url()
+    {
+        return $this->protocol . '://' . $this->host . $this->uri;
+    }
+
+    public function oldURL()
+    {
+        if ($this->header('Referer') !== false) {
+            return $this->header('Referer');
+        }
+
+        return null;
     }
 }

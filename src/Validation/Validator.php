@@ -26,12 +26,25 @@ use OSN\Framework\Utils\Arrayable;
 class Validator
 {
     use Rules;
+    use RuleErrorMessages;
     use Sanitizers;
 
-    public function __construct(array|object $data, protected array $rules)
+    protected array $errors = [];
+
+    public function __construct(array|object $data, protected array $rules = [])
     {
         $data = $data instanceof Arrayable ? $data->toArray() : $data;
         $this->data = (array) $data;
+    }
+
+    /**
+     * @param array $rules
+     * @return Validator
+     */
+    public function setRules(array $rules): Validator
+    {
+        $this->rules = $rules;
+        return $this;
     }
 
     public static function make(array|object $data, array $rules): static
@@ -43,9 +56,10 @@ class Validator
      * Validate the data according to the rules.
      *
      * @throws ValidatorException
-     * @return void
+     * @return bool
+     * @todo Add support for error logging
      */
-    public function validate(): void
+    public function validate(): bool
     {
         foreach ($this->rules as $field => $rules) {
             foreach ($rules as $rule) {
@@ -57,10 +71,11 @@ class Validator
                 }
 
                 $ruleMethod = "rule" . ucfirst($ruleExploded[0]);
+                $ruleErrorMethod = "rule" . ucfirst($ruleExploded[0]) . "Error";
 
                 if (method_exists($this, $ruleMethod)) {
                     if (!call_user_func_array([$this, $ruleMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments])) {
-                        throw new ValidatorException("Validation failed for field '{$field}' (rule '{$rule}', value '" . ($this->data[$field] ?? '') . "')", 1);
+                        $this->errors[$field][$ruleExploded[0]] = method_exists($this, $ruleErrorMethod) ? call_user_func_array([$this, $ruleErrorMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments]) : "There was a validation error with this field";
                     }
                 }
                 else {
@@ -68,6 +83,8 @@ class Validator
                 }
             }
         }
+
+        return empty($this->errors);
     }
 
     /**
@@ -116,5 +133,10 @@ class Validator
             $this->sanitize();
 
         return $this->sanitized;
+    }
+
+    public function errors()
+    {
+        return $this->errors;
     }
 }
