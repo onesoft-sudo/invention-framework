@@ -1,4 +1,7 @@
-![Invention Framework](https://repository-images.githubusercontent.com/438729131/0c5749e4-96da-4f48-b2d0-0d931478b79c)
+![Invention Framework](https://res.cloudinary.com/rakinar2/image/upload/v1648117999/Invention-Framework-Card-transparent_vglkd5.png)
+ 
+<!-- 
+ https://repository-images.githubusercontent.com/438729131/0c5749e4-96da-4f48-b2d0-0d931478b79c -->
  
 # Invention Framework
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/build.yml/badge.svg)
