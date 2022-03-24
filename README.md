@@ -1,4 +1,4 @@
-![Invention Framework](https://github.com/onesoft-sudo/invention-framework/settings/og-template)
+![Invention Framework](https://repository-images.githubusercontent.com/438729131/021c84fc-f704-4576-8ff7-79aab00a4f14)
  
 # Invention Framework
 ![Build](https://github.com/onesoft-sudo/invention-framework/actions/workflows/build.yml/badge.svg)
