@@ -1,4 +1,4 @@
-![Invention Framework](https://res.cloudinary.com/rakinar2/image/upload/v1648117999/Invention-Framework-Card-transparent_vglkd5.png)
+![Invention Framework](https://res.cloudinary.com/rakinar2/image/upload/v1648118397/Invention-Framework-Card-transparent_afez0c.png)
  
 <!-- 
  https://repository-images.githubusercontent.com/438729131/0c5749e4-96da-4f48-b2d0-0d931478b79c -->
