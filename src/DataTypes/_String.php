@@ -189,6 +189,16 @@ class _String implements DataTypeInterface
         return json_decode($this->data);
     }
 
+    public function camel2slug()
+    {
+        return new static(strtolower(preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '-', $this->data)));
+    }
+
+    public function pascal2slug()
+    {
+        return $this->camel2slug();
+    }
+
     public function slug(string $delim = '-')
     {
         $delims = "\\\n\r~`!@#\$%^&*()_+=\"\';:,[]{}?<>";
