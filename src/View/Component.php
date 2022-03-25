@@ -23,11 +23,13 @@ use OSN\Framework\PowerParser\HTMLAttributes;
 
 abstract class Component implements \OSN\Framework\Contracts\Component
 {
-    private array $attributes = [];
+    private array $attributes;
+    private array $slots;
 
-    public final function __construct(array $data)
+    public final function __construct(array $slots, array $data)
     {
         $this->attributes = $data;
+        $this->slots = $slots;
         call_user_func_array([$this, 'boot'], array_values($data));
     }
 
@@ -36,10 +38,19 @@ abstract class Component implements \OSN\Framework\Contracts\Component
         return $this->render() . '';
     }
 
+    /**
+     * @return array
+     */
+    public function getSlots(): array
+    {
+        return $this->slots;
+    }
+
     protected function view(string $view, array $data = [], $layout = ''): View
     {
         $data = array_merge($this->dataArray(), $data, ['__attributes' => new HTMLAttributes($this->attributes)]);
-        return view($view, $data, $layout);
+        $view = new View($view, $data, $layout);
+        return $view->setSlots($this->getSlots());
     }
 
     protected function dataArray(): array

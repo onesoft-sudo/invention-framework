@@ -30,6 +30,7 @@ class View
     protected PowerParser $parser;
     protected string $file;
     protected string $title = '';
+    protected array $slots = [];
 
     /**
      * View constructor.
@@ -57,14 +58,25 @@ class View
         $this->parser = new PowerParser($file);
     }
 
+    /**
+     * @param array $slots
+     * @return View
+     */
+    public function setSlots(array $slots): self
+    {
+        $this->slots = $slots;
+        return $this;
+    }
+
     public function render()
     {
         $_names = [];
         $_sections = [];
         $_names_modified = [];
         $_layout = $this->layout;
+        $_slots = $this->slots;
 
-        $view = $this->renderView($_names, $_sections, $_names_modified, $_layout);
+        $view = $this->renderView($_names, $_sections, $_names_modified, $_layout, $_slots);
 
         if ($_layout === false || $_layout === null)
              return $view;
@@ -78,7 +90,7 @@ class View
         return preg_replace("/\[\[( *)view( *)\]\]/", $view, $layout);
     }
 
-    public function renderView(&$_names = [], &$_sections = [], &$_names_modified = [], &$_layout = [])
+    public function renderView(&$_names = [], &$_sections = [], &$_names_modified = [], &$_layout = [], &$_slots = [])
     {
         foreach ($this->data as $key => $value) {
             $$key = $value;

@@ -190,7 +190,7 @@ class PowerParser
         }
 
         /**
-         * while and endwhile statements.
+         * error and enderror statements.
          */
         $regex = ":error\((.*?)\):";
         if (preg_match_all("/$regex/", $output, $matches)) {
@@ -199,10 +199,37 @@ class PowerParser
 
         $output = preg_replace("/:enderror:/", $this->php("unset(\$_error_field);\nunset(\$_error_current); \n}\n"), $output);
 
-        /*
-         * Component tag rendering.
+        /**
+         * slot rendering.
          */
-        $regex = "< *c-([a-z0-9-\.]+)( *([\n ]+[a-zA-Z0-9-_:\.@]+\=[\"](.*?)[\"])+)? *(\/)? *>";
+        $regex = ":slot\((.*?)\):";
+
+        if (preg_match_all("/$regex/", $output, $matches)) {
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$_s = %s; isset(\$_slots[\$_s]) || (throw new \RuntimeException('Slot \''.\$_s.'\' not found')); echo \$_slots[\$_s]; unset(\$_s);"));
+        }
+
+        $regex = ":tryslot\((.*?)\):";
+
+        if (preg_match_all("/$regex/", $output, $matches)) {
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$_s = %s; if (isset(\$_slots[\$_s])) { echo \$_slots[\$_s]; }\n unset(\$_s);"));
+        }
+
+        $regex = ":ifslot\((.*?)\):";
+        if (preg_match_all("/$regex/", $output, $matches)) {
+            $output = $this->replaceFromPregArray($output, $matches, $this->php("\$_s = %s; if (isset(\$_slots[\$_s])) {\n"));
+        }
+
+        $output = preg_replace("/:endifslot:/", $this->php("}\n unset(\$_s);\n"), $output);
+
+        $this->compileSimpleComponentTag($output);
+        $this->compileComplexComponentTag($output);
+
+        return $output;
+    }
+
+    public function compileSimpleComponentTag(&$output)
+    {
+        $regex = "< *c-([a-z0-9-\.]+)( *([\n ]+[a-zA-Z0-9-_:\.@]+\=[\"](.*?)[\"])+)? *(\/) *>";
 
         if (preg_match_all("/$regex/m", $output, $matches)) {
             foreach ($matches[1] as $i => $match) {
@@ -225,8 +252,54 @@ class PowerParser
                 $output = str_replace($matches[0][$i], $this->php("echo \\OSN\\Framework\\PowerParser\\PowerParser::renderComponent('$match', " . ($attributes) . ");"), $output);
             }
         }
+    }
 
-        return $output;
+    public function compileComplexComponentTag(&$output)
+    {
+        $regex = "< *c-([a-z0-9-\.]+)( *([\n ]+[a-zA-Z0-9-_:\.@]+\=[\"](.*?)[\"])+)? *>";
+        $tagMatch = function ($tag) {
+            return "< *c-(" . $tag . ")( *([\n ]+[a-zA-Z0-9-_:\.@]+=[\"](.*?)[\"])+)? *>(.*?)< *\/ *c-(" . $tag . ")>";
+        };
+
+        if (preg_match_all("/$regex/ms", $output, $matches)) {
+            foreach ($matches[1] as $i => $tag) {
+                $php = '';
+                if (preg_match_all("/".$tagMatch(preg_quote($tag, '/'))."/sm", $output, $matches2)) {
+                    foreach ($matches2[5] as $k1 => $inner) {
+                        $slots = '';
+
+                        if (preg_match_all("/< *c-slot-([a-z0-9-]+)( *([\n ]+[a-zA-Z0-9-_:\.@]+\=[\"](.*?)[\"])+)? *>/m", $inner, $matches3)) {
+                            foreach ($matches3[1] as $slot) {
+                                if (preg_match_all("/".$tagMatch('slot-' . preg_quote($slot, '/'))."/sm", $inner, $matches4)) {
+                                    $content = $matches4[5][0];
+                                    $php .= "if (!isset(\$_slots)) {\n\$_slots = [];\n}\n";
+                                    $php .= "\$_slots['$slot'] = '".str_replace("'", "\\'", $content)."';";
+                                    $slots .= $php;
+                                }
+                            }
+                        }
+
+                        $attributes = '';
+
+                        preg_match_all("/([A-Za-z0-9-_:\.@]+)\=[\"](.*?)([\"])/", $matches2[2][$k1], $matches5);
+
+                        foreach ($matches5[0] as $k => $v) {
+                            $bind = isset($matches5[1][$k][0]) && $matches5[1][$k][0] == ':';
+
+                            if ($bind && $matches5[2][$k] == '') {
+                                $attributes .= "\"" . substr($matches5[1][$k], 1) . "\" => null,";
+                                continue;
+                            }
+
+                            $attributes .= preg_replace("/:?([A-Za-z0-9-_:\.@]+)\=[\"](.*?)[\"]/", "\"" . ($bind ? substr($matches5[1][$k], 1) : "$1") . "\" => " . ($bind ? '$2' : "\"\$2\"") . ",", $v);
+                        }
+
+                        $attributes = "[$attributes]";
+                        $output = str_replace($matches2[0][$k1], $this->php($slots . "\n echo \\OSN\\Framework\\PowerParser\\PowerParser::renderComponent('$tag', " . ($attributes) . ", \$_slots); \$_slots = [];"), $output);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -234,12 +307,13 @@ class PowerParser
      *
      * @param string $htmlTag
      * @param array $attributes
+     * @param array $slots
      * @return Component
      */
-    public static function renderComponent(string $htmlTag, array $attributes)
+    public static function renderComponent(string $htmlTag, array $attributes, array $slots = [])
     {
         $class = "\\App\\ViewComponents\\" . _String::from($htmlTag)->slug2className()->replace('/\./', "\\");
-        return new $class($attributes);
+        return new $class($slots, $attributes);
     }
 
     protected function eval($code)
