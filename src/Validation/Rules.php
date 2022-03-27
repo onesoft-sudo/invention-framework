@@ -148,8 +148,11 @@ trait Rules
      * @param string $column
      * @return bool
      */
-    protected function ruleUnique($data, string $field, string $table, string $column): bool
+    protected function ruleUnique($data, string $field, string $table, ?string $column = null): bool
     {
+        if ($column === null)
+            $column = $field;
+
         $statement = db()->prepare("SELECT $column FROM $table WHERE $column = ?");
         $statement->execute([$data]);
 
