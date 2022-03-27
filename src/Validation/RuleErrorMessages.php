@@ -34,4 +34,14 @@ trait RuleErrorMessages
     {
         return "The length of this field must be less than $max";
     }
+
+    public function ruleEmailError(): string
+    {
+        return "This field must be a valid email address";
+    }
+
+    public function ruleUniqueError(): string
+    {
+        return "A record with this field value already exists in the database";
+    }
 }
