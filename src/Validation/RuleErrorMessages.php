@@ -42,6 +42,11 @@ trait RuleErrorMessages
 
     public function ruleUniqueError(): string
     {
-        return "A record with this field value already exists in the database";
+        return "A record with this field value already exists";
+    }
+
+    public function ruleConfirmedError($value, $field): string
+    {
+        return "This field value must match with " . preg_replace("/_confirmation$/", '', $field);
     }
 }

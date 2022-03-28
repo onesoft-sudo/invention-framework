@@ -28,6 +28,12 @@ abstract class FormRequest
     public function __construct(public array $data = [])
     {
         $this->validator = new Validator($data);
+        $this->validator->setErrorMessages($this->errors());
+    }
+
+    public function errors(): ?array
+    {
+        return null;
     }
 
     public function validate(): bool

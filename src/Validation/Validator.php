@@ -23,18 +23,29 @@ use OSN\Framework\Exceptions\ValidatorException;
 use OSN\Framework\Http\RequestValidator;
 use OSN\Framework\Utils\Arrayable;
 
-class Validator
+class Validator implements \OSN\Framework\Contracts\Validator
 {
     use Rules;
     use RuleErrorMessages;
     use Sanitizers;
 
     protected array $errors = [];
+    protected ?array $errorMessages = [];
 
     public function __construct(array|object $data, protected array $rules = [])
     {
         $data = $data instanceof Arrayable ? $data->toArray() : $data;
         $this->data = (array) $data;
+    }
+
+    /**
+     * @param array|null $errorMessages
+     * @return Validator
+     */
+    public function setErrorMessages(?array $errorMessages): self
+    {
+        $this->errorMessages = $errorMessages;
+        return $this;
     }
 
     /**
@@ -71,11 +82,11 @@ class Validator
                 }
 
                 $ruleMethod = "rule" . ucfirst($ruleExploded[0]);
-                $ruleErrorMethod = "rule" . ucfirst($ruleExploded[0]) . "Error";
 
                 if (method_exists($this, $ruleMethod)) {
                     if (!call_user_func_array([$this, $ruleMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments])) {
-                        $this->errors[$field][$ruleExploded[0]] = method_exists($this, $ruleErrorMethod) ? call_user_func_array([$this, $ruleErrorMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments]) : "There was a validation error with this field";
+                        $this->addError($field, $ruleExploded[0], $rule, $ruleArguments);
+                      // $this->errors[$field][$ruleExploded[0]] = method_exists($this, $ruleErrorMethod) ? call_user_func_array([$this, $ruleErrorMethod], [$this->data[$field] ?? null, $field, ...$ruleArguments]) : "There was a validation error with this field";
                     }
                 }
                 else {
@@ -85,6 +96,40 @@ class Validator
         }
 
         return empty($this->errors);
+    }
+
+    public function addError(string $field, string $rule, string $wholeRule, array $ruleArguments = [])
+    {
+        $ruleArguments = [$this->data[$field] ?? null, $field, ...$ruleArguments];
+
+        if ($this->errorMessages !== null) {
+            if (isset($this->errorMessages[$field][$wholeRule])) {
+                $this->addErrorRaw($field, $rule, $this->replaceErrorMessagePlaceholders($this->errorMessages[$field][$wholeRule], $ruleArguments));
+                return;
+            }
+
+            if (isset($this->errorMessages[$field][$rule])) {
+                $this->addErrorRaw($field, $rule, $this->replaceErrorMessagePlaceholders($this->errorMessages[$field][$rule], $ruleArguments));
+                return;
+            }
+        }
+
+        $ruleErrorMethod = "rule" . ucfirst($rule) . "Error";
+        $this->addErrorRaw($field, $rule, method_exists($this, $ruleErrorMethod) ? call_user_func_array([$this, $ruleErrorMethod], $ruleArguments) : "There was a validation error with this field");
+    }
+
+    protected function replaceErrorMessagePlaceholders(string $msg, array $args): string
+    {
+        foreach ($args as $key => $value) {
+            $msg = str_replace("{{$key}}", $value, $msg);
+        }
+
+        return $msg;
+    }
+
+    public function addErrorRaw(string $field, string $rule, string $message)
+    {
+        $this->errors[$field][$rule] = $message;
     }
 
     /**
