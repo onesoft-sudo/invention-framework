@@ -4,3 +4,4 @@ vendor/
 .vscode/
 composer.lock
 .svn/
+push
