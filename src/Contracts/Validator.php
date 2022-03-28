@@ -51,7 +51,6 @@ interface Validator
      *
      * @return bool
      * @throws ValidatorException
-     * @todo Add support for error logging
      */
     public function validate(): bool;
 
