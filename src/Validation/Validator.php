@@ -68,7 +68,6 @@ class Validator implements \OSN\Framework\Contracts\Validator
      *
      * @throws ValidatorException
      * @return bool
-     * @todo Add support for error logging
      */
     public function validate(): bool
     {
