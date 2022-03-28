@@ -125,7 +125,12 @@ trait Rules
     protected function ruleConfirmed($data, string $field, ?string $confirmationField = null): bool
     {
         $c = $confirmationField ?? ($field . '_confirmation');
-        return $this->ruleRequired($this->data[$c] ?? '') && $this->data[$c] === $data;
+
+        if(!($this->ruleRequired($this->data[$c] ?? '') && $this->data[$c] === $data)) {
+            $this->addError($field . '_confirmation', static::RULE_CONFIRMED, static::RULE_CONFIRMED, [$confirmationField]);
+        }
+
+        return true;
     }
 
     /**
