@@ -273,7 +273,17 @@ class PowerParser
                                 if (preg_match_all("/".$tagMatch('slot-' . preg_quote($slot, '/'))."/sm", $inner, $matches4)) {
                                     $content = $matches4[5][0];
                                     $php .= "if (!isset(\$_slots)) {\n\$_slots = [];\n}\n";
-                                    $php .= "\$_slots['$slot'] = '".str_replace("'", "\\'", $content)."';";
+
+                                    $php .= "\$_slots['$slot'] = '" . str_replace(
+                                        ['<?php ', '<?= '],
+                                        "' . call_user_func(function(\$____p____) {ob_start(); eval(\$____p____); return ob_get_clean();}, '",
+                                        str_replace(
+                                            ' ?>',
+                                            "') . '",
+                                            str_replace("'", "\\'", $content)
+                                        )
+                                    ) . "';";
+
                                     $slots .= $php;
                                 }
                             }
