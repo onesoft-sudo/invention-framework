@@ -26,7 +26,6 @@ use OSN\Framework\Core\Middleware;
  * @package OSN\Framework\Routing
  * @author Ar Rakin <rakinar2@gmail.com>
  * @todo Add group() method
- * @todo Add dynamic parameter binding support
  */
 class Route
 {
