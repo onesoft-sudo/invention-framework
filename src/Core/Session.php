@@ -97,9 +97,19 @@ class Session
         return $_SESSION[$key] ?? null;
     }
 
-    public function set($key, $value)
+    public function set($key, $value = '')
     {
-        $_SESSION[$key] = $value;
+        if ($value !== '') {
+            $_SESSION[$key] = $value;
+            return;
+        }
+
+        $_SESSION = array_merge_recursive($_SESSION, $key);
+    }
+
+    public function push($key, $value)
+    {
+        $_SESSION[$key][] = $value;
     }
 
     /**
@@ -165,6 +175,11 @@ class Session
     {
         session_unset();
         session_destroy();
+    }
+
+    public function all()
+    {
+        return $_SESSION;
     }
 
     /**
