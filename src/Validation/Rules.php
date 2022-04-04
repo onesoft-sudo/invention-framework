@@ -96,7 +96,7 @@ trait Rules
     #[\Pure]
     protected function ruleMin($data, $field, int|float $min): bool
     {
-        return strlen($data) >= $min;
+        return strlen((string) $data) >= $min;
     }
 
     /**
@@ -110,7 +110,7 @@ trait Rules
     #[\Pure]
     protected function ruleMax($data, $field, int|float $max): bool
     {
-        return strlen($data) <= $max;
+        return strlen((string) $data) <= $max;
     }
 
     /**
