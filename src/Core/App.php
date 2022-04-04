@@ -23,6 +23,7 @@ use OSN\Framework\Exceptions\HTTPException;
 use OSN\Framework\Http\Request;
 use OSN\Framework\Http\Response;
 use OSN\Framework\Routing\Router;
+use OSN\Framework\Utils\Security\CSRF;
 use OSN\Framework\View\View;
 
 /**
@@ -48,6 +49,7 @@ class App extends \OSN\Framework\Foundation\App
         $this->bind(Response::class, fn() => new Response(), 'response', true);
         $this->bind(Request::class, fn() => new Request(), 'request', true);
         $this->bind(Router::class, fn() => new Router($this->request, $this->response), 'router', true);
+        $this->bind(CSRF::class, fn() => new CSRF($this->session), 'csrf', true);
     }
 
     /**

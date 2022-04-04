@@ -445,17 +445,12 @@ class Request implements Arrayable
      *
      * @param array $rules
      * @return bool
+     * @throws ValidatorException
      */
     public function validate(array $rules): bool
     {
-        try {
-            $this->validator = Validator::make($this, $rules);
-            $this->validator->validate();
-            return true;
-        }
-        catch (ValidatorException $e) {
-            return false;
-        }
+        $this->validator = Validator::make($this, $rules);
+        return $this->validator->validate();
     }
 
     /**
