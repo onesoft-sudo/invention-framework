@@ -506,8 +506,7 @@ if (!function_exists('csrf_token')) {
      */
     function csrf_token(): string
     {
-        $csrf = new CSRF();
-        return $csrf->new();
+        return app()->csrf->new();
     }
 }
 
@@ -520,8 +519,7 @@ if (!function_exists('end_csrf_token')) {
      */
     function end_csrf_token()
     {
-        $csrf = new CSRF();
-        $csrf->endCSRF();
+        app()->csrf->endCSRF();
     }
 }
 
