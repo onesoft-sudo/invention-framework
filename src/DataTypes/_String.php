@@ -194,6 +194,11 @@ class _String implements DataTypeInterface
         return new static(strtolower(preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '-', $this->data)));
     }
 
+    public function camel2snake()
+    {
+        return new static(strtolower(preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $this->data)));
+    }
+
     public function pascal2slug()
     {
         return $this->camel2slug();
